@@ -2,23 +2,30 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Tu Nombre — Portafolio creativo",
+  title: "Edgar Talavera — Software, AI & SRE Engineer",
   description:
-    "Diseño digital, dirección visual y desarrollo creativo en una experiencia 3D interactiva.",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    "Portfolio of Edgar Talavera, software engineer focused on scalable products, applied AI and reliable cloud systems.",
+  keywords: [
+    "Software Engineer",
+    "AI Engineer",
+    "SRE",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "AWS",
+  ],
+  openGraph: {
+    title: "Edgar Talavera — Software, AI & SRE Engineer",
+    description:
+      "Scalable software, applied AI and reliable cloud systems.",
+    type: "website",
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es">
-      <body className="antialiased">{children}</body>
+    <html lang="es" suppressHydrationWarning>
+      <body>{children}</body>
     </html>
   );
 }

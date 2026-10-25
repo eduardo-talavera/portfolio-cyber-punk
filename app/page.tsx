@@ -1,267 +1,691 @@
 "use client";
 
-import { useEffect } from "react";
-import MonolithScene from "../components/monolith-scene";
+import { useEffect, useRef, useState } from "react";
+import { SignalField } from "../components/signal-field";
 
-const projects = [
-  {
-    number: "01",
-    title: "Sistema Orbital",
-    type: "Identidad digital · 2026",
-    description:
-      "Un lenguaje visual flexible que convierte datos, tipografía y movimiento en una experiencia de marca viva.",
-    className: "project-visual project-visual--orbital",
+const content = {
+  es: {
+    nav: { profile: "Perfil", capabilities: "Enfoque", work: "Proyectos", contact: "Contacto" },
+    utility: { language: "Cambiar a inglés", theme: "Cambiar tema", menu: "Abrir navegación" },
+    hero: {
+      eyebrow: "Ingeniero de software · IA · SRE",
+      lineOne: "Construyo software",
+      lineTwo: "que aprende, escala",
+      lineThree: "y permanece estable.",
+      intro: "Soy Edgar Talavera. Transformo problemas complejos en productos claros, sistemas confiables y experiencias web de alto rendimiento.",
+      cta: "Explorar proyectos",
+      secondary: "Hablemos",
+      scroll: "Scroll para explorar",
+    },
+    status: ["México · Disponible remoto", "Español + English", "Producto · IA · Cloud"],
+    scene: {
+      index: "00 / SISTEMA EN MOVIMIENTO",
+      lineOne: "Ideas audaces.",
+      lineTwo: "Sistemas reales.",
+      body: "Conecto producto, inteligencia y operación para convertir complejidad técnica en experiencias que se sienten simples.",
+      cta: "Ver mi enfoque",
+      cardLabel: "Arquitectura viva",
+      cardStatus: "Sistema estable",
+    },
+    about: {
+      index: "01 / PERFIL",
+      title: "Ingeniería con contexto de producto.",
+      body: "Desarrollo aplicaciones web escalables con React, Vue, TypeScript y Node.js. He trabajado en soluciones para fintech, educación y e-commerce, conectando arquitectura, APIs, datos, seguridad y despliegue para resolver necesidades reales del negocio.",
+      note: "Mi criterio: una solución valiosa debe ser fácil de usar, observable en producción y sostenible para el equipo que la mantiene.",
+    },
+    capabilities: {
+      index: "02 / ENFOQUE",
+      title: "Tres disciplinas.\nUn mismo sistema.",
+      intro: "Combino desarrollo de producto, inteligencia aplicada y confiabilidad para reducir la distancia entre una idea y un sistema que funciona en producción.",
+      items: [
+        {
+          number: "01",
+          title: "Product Engineering",
+          body: "Interfaces rápidas, accesibles y mantenibles; servicios y APIs diseñados alrededor del dominio.",
+          tags: ["React / Next.js", "TypeScript", "Node.js", "REST / GraphQL"],
+        },
+        {
+          number: "02",
+          title: "Applied AI",
+          body: "Experiencias de producto con modelos, automatización y flujos de datos medibles, evaluables y útiles.",
+          tags: ["LLM integration", "Automation", "Evaluation", "Data workflows"],
+        },
+        {
+          number: "03",
+          title: "Reliability / SRE",
+          body: "Entrega continua, infraestructura reproducible y observabilidad para operar con confianza.",
+          tags: ["AWS", "Docker", "CI/CD", "Performance"],
+        },
+      ],
+    },
+    projects: {
+      index: "03 / TRABAJO SELECCIONADO",
+      title: "Proyectos diseñados para funcionar.",
+      view: "Ver proyecto",
+      code: "Código",
+      list: [
+        {
+          number: "01",
+          title: "Tickets App",
+          type: "Product Engineering",
+          description: "Plataforma de gestión y seguimiento de tickets de soporte con una experiencia clara para organizar incidencias.",
+          stack: "React · TypeScript · Node.js",
+          live: "https://tickets-app-by-eduardo-talavera.vercel.app/issues",
+          github: "https://github.com/eduardo-talavera/issues-app-frontend",
+          tone: "lime",
+        },
+        {
+          number: "02",
+          title: "Tropix UI",
+          type: "Design Systems",
+          description: "Sistema de diseño y librería de componentes para construir interfaces consistentes y acelerar equipos React.",
+          stack: "React · TypeScript · UI Architecture",
+          live: "https://tropix-ui-docs.vercel.app/",
+          github: "https://github.com/eduardo-talavera/tropix-ui",
+          tone: "cyan",
+        },
+        {
+          number: "03",
+          title: "Twitter Clone",
+          type: "Realtime Product",
+          description: "Experiencia social inspirada en Twitter, con autenticación, publicaciones y persistencia en tiempo real.",
+          stack: "React · Firebase · Realtime Data",
+          live: "https://twitter-clone-3e2df.web.app/",
+          github: null,
+          tone: "magenta",
+        },
+        {
+          number: "04",
+          title: "IP Tracker",
+          type: "Data Visualization",
+          description: "Localizador de direcciones IP que convierte datos de geolocalización en una interfaz cartográfica inmediata.",
+          stack: "JavaScript · API · Maps",
+          live: "https://ip-tracker64.netlify.app/",
+          github: null,
+          tone: "violet",
+        },
+      ],
+    },
+    stack: {
+      index: "04 / SISTEMA",
+      title: "Herramientas que uso para mover ideas a producción.",
+      groups: [
+        { label: "Interfaces", items: "React, Next.js, Vue, TypeScript, Tailwind, CSS, Design Systems" },
+        { label: "Servicios y datos", items: "Node.js, Express, GraphQL, REST, PostgreSQL, MongoDB, Prisma, Firebase" },
+        { label: "Plataforma", items: "AWS, Docker, CI/CD, Vercel, Linux, Bash, GitHub Actions" },
+        { label: "Calidad", items: "Jest, Vitest, Testing Library, observabilidad, performance y seguridad" },
+      ],
+    },
+    contact: {
+      index: "05 / CONTACTO",
+      title: "¿Tienes un reto complejo?",
+      accent: "Construyámoslo bien.",
+      body: "Estoy abierto a conversar sobre posiciones de Software Engineering, Applied AI y SRE, así como proyectos donde confiabilidad y producto importen por igual.",
+      email: "Enviar un correo",
+      social: "O encuéntrame en",
+      availability: "Disponible para oportunidades remotas y colaboraciones seleccionadas.",
+    },
+    footer: "Diseñado y desarrollado por Edgar Talavera",
   },
-  {
-    number: "02",
-    title: "Materia",
-    type: "Dirección de arte · 2026",
-    description:
-      "Una colección de superficies digitales donde el color, la luz y la textura construyen una presencia táctil.",
-    className: "project-visual project-visual--matter",
+  en: {
+    nav: { profile: "Profile", capabilities: "Focus", work: "Work", contact: "Contact" },
+    utility: { language: "Switch to Spanish", theme: "Switch theme", menu: "Open navigation" },
+    hero: {
+      eyebrow: "Software · AI · SRE Engineer",
+      lineOne: "I build software",
+      lineTwo: "that learns, scales",
+      lineThree: "and stays reliable.",
+      intro: "I’m Edgar Talavera. I turn complex problems into clear products, reliable systems and high-performance web experiences.",
+      cta: "Explore projects",
+      secondary: "Let’s talk",
+      scroll: "Scroll to explore",
+    },
+    status: ["Mexico · Remote-ready", "Español + English", "Product · AI · Cloud"],
+    scene: {
+      index: "00 / SYSTEM IN MOTION",
+      lineOne: "Bold ideas.",
+      lineTwo: "Real systems.",
+      body: "I connect product, intelligence and operations to turn technical complexity into experiences that feel simple.",
+      cta: "See my focus",
+      cardLabel: "Living architecture",
+      cardStatus: "System stable",
+    },
+    about: {
+      index: "01 / PROFILE",
+      title: "Engineering with product context.",
+      body: "I build scalable web applications with React, Vue, TypeScript and Node.js. I have worked on fintech, education and e-commerce solutions, connecting architecture, APIs, data, security and delivery to solve real business needs.",
+      note: "My standard: a valuable solution must be easy to use, observable in production and sustainable for the team maintaining it.",
+    },
+    capabilities: {
+      index: "02 / FOCUS",
+      title: "Three disciplines.\nOne connected system.",
+      intro: "I combine product development, applied intelligence and reliability to shorten the distance between an idea and a system that works in production.",
+      items: [
+        {
+          number: "01",
+          title: "Product Engineering",
+          body: "Fast, accessible and maintainable interfaces; services and APIs designed around the domain.",
+          tags: ["React / Next.js", "TypeScript", "Node.js", "REST / GraphQL"],
+        },
+        {
+          number: "02",
+          title: "Applied AI",
+          body: "Product experiences powered by models, automation and measurable, testable and useful data flows.",
+          tags: ["LLM integration", "Automation", "Evaluation", "Data workflows"],
+        },
+        {
+          number: "03",
+          title: "Reliability / SRE",
+          body: "Continuous delivery, reproducible infrastructure and observability to operate with confidence.",
+          tags: ["AWS", "Docker", "CI/CD", "Performance"],
+        },
+      ],
+    },
+    projects: {
+      index: "03 / SELECTED WORK",
+      title: "Projects designed to work.",
+      view: "View project",
+      code: "Code",
+      list: [
+        {
+          number: "01",
+          title: "Tickets App",
+          type: "Product Engineering",
+          description: "A support ticket management and tracking platform with a clear experience for organizing issues.",
+          stack: "React · TypeScript · Node.js",
+          live: "https://tickets-app-by-eduardo-talavera.vercel.app/issues",
+          github: "https://github.com/eduardo-talavera/issues-app-frontend",
+          tone: "lime",
+        },
+        {
+          number: "02",
+          title: "Tropix UI",
+          type: "Design Systems",
+          description: "A design system and component library for consistent interfaces and faster React teams.",
+          stack: "React · TypeScript · UI Architecture",
+          live: "https://tropix-ui-docs.vercel.app/",
+          github: "https://github.com/eduardo-talavera/tropix-ui",
+          tone: "cyan",
+        },
+        {
+          number: "03",
+          title: "Twitter Clone",
+          type: "Realtime Product",
+          description: "A Twitter-inspired social experience with authentication, publishing and real-time persistence.",
+          stack: "React · Firebase · Realtime Data",
+          live: "https://twitter-clone-3e2df.web.app/",
+          github: null,
+          tone: "magenta",
+        },
+        {
+          number: "04",
+          title: "IP Tracker",
+          type: "Data Visualization",
+          description: "An IP address locator that turns geolocation data into an immediate map interface.",
+          stack: "JavaScript · API · Maps",
+          live: "https://ip-tracker64.netlify.app/",
+          github: null,
+          tone: "violet",
+        },
+      ],
+    },
+    stack: {
+      index: "04 / SYSTEM",
+      title: "Tools I use to move ideas into production.",
+      groups: [
+        { label: "Interfaces", items: "React, Next.js, Vue, TypeScript, Tailwind, CSS, Design Systems" },
+        { label: "Services & data", items: "Node.js, Express, GraphQL, REST, PostgreSQL, MongoDB, Prisma, Firebase" },
+        { label: "Platform", items: "AWS, Docker, CI/CD, Vercel, Linux, Bash, GitHub Actions" },
+        { label: "Quality", items: "Jest, Vitest, Testing Library, observability, performance and security" },
+      ],
+    },
+    contact: {
+      index: "05 / CONTACT",
+      title: "Have a complex challenge?",
+      accent: "Let’s build it right.",
+      body: "I’m open to Software Engineering, Applied AI and SRE roles, as well as projects where reliability and product matter equally.",
+      email: "Send an email",
+      social: "Or find me on",
+      availability: "Available for remote opportunities and selected collaborations.",
+    },
+    footer: "Designed and developed by Edgar Talavera",
   },
-  {
-    number: "03",
-    title: "Umbral",
-    type: "Experiencia web · 2026",
-    description:
-      "Narrativa interactiva que transforma el desplazamiento en un recorrido preciso, envolvente y memorable.",
-    className: "project-visual project-visual--threshold",
-  },
-];
+} as const;
+
+type Language = keyof typeof content;
+type Theme = "dark" | "light";
 
 export default function Home() {
+  const [language, setLanguage] = useState<Language>("es");
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const kineticSectionRef = useRef<HTMLElement>(null);
+  const projectSectionRef = useRef<HTMLElement>(null);
+  const projectTrackRef = useRef<HTMLDivElement>(null);
+  const t = content[language];
+
   useEffect(() => {
-    let cleanup = () => {};
+    const savedLanguage = window.localStorage.getItem("portfolio-language") as Language | null;
+    const savedTheme = window.localStorage.getItem("portfolio-theme") as Theme | null;
+    const preferredTheme: Theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 
-    async function startMotion() {
-      const reduceMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-      const { gsap } = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      gsap.registerPlugin(ScrollTrigger);
-
-      const context = gsap.context(() => {
-        gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
-          gsap.fromTo(
-            element,
-            { y: reduceMotion ? 0 : 60, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: reduceMotion ? 0.01 : 1.15,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: element,
-                start: "top 86%",
-                once: true,
-              },
-            },
-          );
-        });
-
-        if (!reduceMotion) {
-          gsap.to(".hero-word--one", {
-            xPercent: -10,
-            scrollTrigger: {
-              trigger: ".hero",
-              start: "top top",
-              end: "bottom top",
-              scrub: 1,
-            },
-          });
-          gsap.to(".hero-word--two", {
-            xPercent: 13,
-            scrollTrigger: {
-              trigger: ".hero",
-              start: "top top",
-              end: "bottom top",
-              scrub: 1,
-            },
-          });
-        }
-      });
-
-      if (!reduceMotion) {
-        const { default: Lenis } = await import("lenis");
-        const lenis = new Lenis({
-          lerp: 0.085,
-          smoothWheel: true,
-          wheelMultiplier: 0.9,
-        });
-        let frame = 0;
-        const raf = (time: number) => {
-          lenis.raf(time);
-          frame = requestAnimationFrame(raf);
-        };
-        frame = requestAnimationFrame(raf);
-        lenis.on("scroll", ScrollTrigger.update);
-
-        cleanup = () => {
-          cancelAnimationFrame(frame);
-          lenis.destroy();
-          context.revert();
-        };
-      } else {
-        cleanup = () => context.revert();
-      }
-    }
-
-    void startMotion();
-    return () => cleanup();
+    if (savedLanguage === "es" || savedLanguage === "en") setLanguage(savedLanguage);
+    setTheme(savedTheme === "light" || savedTheme === "dark" ? savedTheme : preferredTheme);
   }, []);
 
-  return (
-    <main>
-      <a className="skip-link" href="#contenido">
-        Saltar al contenido
-      </a>
+  useEffect(() => {
+    document.documentElement.lang = language;
+    window.localStorage.setItem("portfolio-language", language);
+  }, [language]);
 
-      <div className="scene-shell" aria-hidden="true">
-        <MonolithScene />
-      </div>
-      <div className="grain" aria-hidden="true" />
-      <div className="cursor-glow" aria-hidden="true" />
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem("portfolio-theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    let animationFrame = 0;
+    let cleanup = () => {};
+    let cancelled = false;
+
+    const startMotion = async () => {
+      const { default: Lenis } = await import("lenis");
+      if (cancelled) return;
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const root = document.documentElement;
+      const clamp = (value: number) => Math.min(1, Math.max(0, value));
+      const smooth = (value: number) => value * value * (3 - 2 * value);
+
+      root.dataset.reducedMotion = reduceMotion ? "true" : "false";
+
+      const syncProjectHeight = () => {
+        const section = projectSectionRef.current;
+        const track = projectTrackRef.current;
+        if (!section || !track || window.innerWidth <= 900 || reduceMotion) {
+          section?.style.removeProperty("height");
+          return;
+        }
+
+        const travel = Math.max(0, track.scrollWidth - window.innerWidth + 72);
+        section.style.height = `${window.innerHeight + travel + window.innerHeight * 0.55}px`;
+      };
+
+      const updateKineticScene = (scrollY: number) => {
+        const section = kineticSectionRef.current;
+        if (!section) return;
+
+        if (reduceMotion) {
+          section.style.setProperty("--scene-progress", "1");
+          section.style.setProperty("--scene-reveal", "1");
+          section.style.setProperty("--scene-settle", "1");
+          section.style.setProperty("--portal-x", "0px");
+          section.style.setProperty("--portal-y", "0px");
+          section.style.setProperty("--portal-scale", "1");
+          section.style.setProperty("--portal-tilt", "0deg");
+          section.style.setProperty("--title-x", "0px");
+          section.style.setProperty("--copy-x", "0px");
+          section.style.setProperty("--arc-rotation", "28deg");
+          return;
+        }
+
+        const range = Math.max(1, section.offsetHeight - window.innerHeight);
+        const rawProgress = clamp((scrollY - section.offsetTop) / range);
+        const progress = smooth(rawProgress);
+        const reveal = smooth(clamp((rawProgress - 0.12) / 0.56));
+        const settle = smooth(clamp((rawProgress - 0.58) / 0.42));
+        const mobile = window.innerWidth <= 700;
+
+        section.style.setProperty("--scene-progress", progress.toFixed(4));
+        section.style.setProperty("--scene-reveal", reveal.toFixed(4));
+        section.style.setProperty("--scene-settle", settle.toFixed(4));
+        section.style.setProperty("--portal-x", `${mobile ? 0 : -progress * window.innerWidth * 0.23}px`);
+        section.style.setProperty("--portal-y", `${progress * window.innerHeight * (mobile ? 0.25 : 0.2)}px`);
+        section.style.setProperty("--portal-scale", `${1 - progress * (mobile ? 0.3 : 0.42)}`);
+        section.style.setProperty("--portal-tilt", `${progress * -4}deg`);
+        section.style.setProperty("--title-x", `${(1 - reveal) * -190}px`);
+        section.style.setProperty("--copy-x", `${(1 - reveal) * 150}px`);
+        section.style.setProperty("--arc-rotation", `${-105 + reveal * 138}deg`);
+      };
+
+      const updateProjects = (scrollY: number) => {
+        const section = projectSectionRef.current;
+        const track = projectTrackRef.current;
+        if (!section || !track || window.innerWidth <= 900 || reduceMotion) {
+          if (track) track.style.transform = "none";
+          return;
+        }
+
+        const sectionStart = section.offsetTop;
+        const scrollRange = Math.max(1, section.offsetHeight - window.innerHeight);
+        const progress = clamp((scrollY - sectionStart) / scrollRange);
+        const travel = Math.max(0, track.scrollWidth - window.innerWidth + 72);
+        track.style.transform = `translate3d(${-progress * travel}px, 0, 0)`;
+        root.style.setProperty("--project-progress", progress.toString());
+      };
+
+      const updateGlobalMotion = (scrollY: number, velocity = 0) => {
+        root.style.setProperty("--scroll-y", `${scrollY}px`);
+        root.style.setProperty("--scroll-velocity", Math.min(Math.abs(velocity), 30).toString());
+        updateKineticScene(scrollY);
+        updateProjects(scrollY);
+      };
+
+      if (reduceMotion) {
+        updateGlobalMotion(window.scrollY);
+        cleanup = () => {
+          delete root.dataset.reducedMotion;
+        };
+        return;
+      }
+
+      const lenis = new Lenis({
+        duration: 1.15,
+        smoothWheel: true,
+        wheelMultiplier: 0.9,
+        touchMultiplier: 1.1,
+      });
+
+      const onScroll = (event: { scroll: number; velocity: number }) => updateGlobalMotion(event.scroll, event.velocity);
+      const onResize = () => {
+        syncProjectHeight();
+        updateGlobalMotion(lenis.scroll);
+      };
+      const raf = (time: number) => {
+        lenis.raf(time);
+        animationFrame = window.requestAnimationFrame(raf);
+      };
+
+      const resizeObserver = new ResizeObserver(onResize);
+      if (projectTrackRef.current) resizeObserver.observe(projectTrackRef.current);
+
+      lenis.on("scroll", onScroll);
+      window.addEventListener("resize", onResize);
+      syncProjectHeight();
+      updateGlobalMotion(window.scrollY);
+      animationFrame = window.requestAnimationFrame(raf);
+
+      cleanup = () => {
+        window.cancelAnimationFrame(animationFrame);
+        window.removeEventListener("resize", onResize);
+        resizeObserver.disconnect();
+        lenis.destroy();
+        delete root.dataset.reducedMotion;
+      };
+    };
+
+    startMotion();
+    return () => {
+      cancelled = true;
+      cleanup();
+    };
+  }, []);
+
+  useEffect(() => {
+    const revealElements = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.setAttribute("data-visible", "true");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+
+    revealElements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [language]);
+
+  const switchLanguage = () => setLanguage((current) => (current === "es" ? "en" : "es"));
+  const switchTheme = () => setTheme((current) => (current === "dark" ? "light" : "dark"));
+
+  return (
+    <>
+      <a className="skip-link" href="#main">Skip to content</a>
+      <SignalField />
+      <div className="ambient ambient-one" aria-hidden="true" />
+      <div className="ambient ambient-two" aria-hidden="true" />
 
       <header className="site-header">
-        <a className="brand" href="#inicio" aria-label="Ir al inicio">
-          TN<span>®</span>
+        <a className="brand" href="#top" aria-label="Edgar Talavera — Home">
+          <span className="brand-mark">ET</span>
+          <span className="brand-copy">EDGAR / TALAVERA</span>
         </a>
-        <p className="availability">
-          <span /> Disponible para proyectos · 2026
-        </p>
-        <nav aria-label="Navegación principal">
-          <a href="#trabajo">Trabajo</a>
-          <a href="#perfil">Perfil</a>
-          <a href="#contacto">Contacto</a>
+
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-label={t.utility.menu}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((current) => !current)}
+        >
+          <span />
+          <span />
+        </button>
+
+        <nav className={menuOpen ? "site-nav is-open" : "site-nav"} aria-label="Primary navigation">
+          <a href="#profile" onClick={() => setMenuOpen(false)}>{t.nav.profile}</a>
+          <a href="#capabilities" onClick={() => setMenuOpen(false)}>{t.nav.capabilities}</a>
+          <a href="#work" onClick={() => setMenuOpen(false)}>{t.nav.work}</a>
+          <a href="#contact" onClick={() => setMenuOpen(false)}>{t.nav.contact}</a>
         </nav>
+
+        <div className="header-tools">
+          <button className="tool-button language-button" type="button" onClick={switchLanguage} aria-label={t.utility.language}>
+            <span className={language === "es" ? "is-active" : ""}>ES</span>
+            <span>/</span>
+            <span className={language === "en" ? "is-active" : ""}>EN</span>
+          </button>
+          <button className="tool-button theme-button" type="button" onClick={switchTheme} aria-label={t.utility.theme}>
+            <span className="theme-orbit" aria-hidden="true"><i /></span>
+          </button>
+        </div>
       </header>
 
-      <section className="hero" id="inicio">
-        <div className="hero-kicker">Portafolio / Edición 01</div>
-        <h1 aria-label="Hago ideas tangibles">
-          <span className="hero-word hero-word--one">Hago</span>
-          <span className="hero-word hero-word--two">ideas</span>
-          <span className="hero-word hero-word--three">tangibles.</span>
-        </h1>
-        <div className="hero-meta">
-          <p>
-            Diseño digital, dirección visual
-            <br />y desarrollo creativo.
-          </p>
-          <a className="round-link" href="#trabajo" aria-label="Ver proyectos">
-            <span>Explorar</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 4v15m0 0 6-6m-6 6-6-6" />
-            </svg>
-          </a>
+      <main id="main">
+        <section className="hero" id="top">
+          <div className="hero-grid" aria-hidden="true" />
+          <div className="hero-orbit orbit-one" aria-hidden="true" />
+          <div className="hero-orbit orbit-two" aria-hidden="true" />
+          <div className="hero-content">
+            <p className="eyebrow hero-eyebrow"><span className="pulse" />{t.hero.eyebrow}</p>
+            <h1>
+              <span>{t.hero.lineOne}</span>
+              <span className="outline-text">{t.hero.lineTwo}</span>
+              <span>{t.hero.lineThree}</span>
+            </h1>
+            <div className="hero-bottom">
+              <p className="hero-intro">{t.hero.intro}</p>
+              <div className="hero-actions">
+                <a className="button button-primary magnetic" href="#work"><span>{t.hero.cta}</span><i aria-hidden="true">↘</i></a>
+                <a className="button button-ghost" href="#contact">{t.hero.secondary}</a>
+              </div>
+            </div>
+          </div>
+
+          <div className="scroll-cue" aria-hidden="true">
+            <span>{t.hero.scroll}</span>
+            <i />
+          </div>
+          <span className="hero-coordinate coordinate-left">19.4326° N</span>
+          <span className="hero-coordinate coordinate-right">99.1332° W</span>
+        </section>
+
+        <div className="status-strip" aria-label="Professional status">
+          {t.status.map((item, index) => (
+            <span key={item}><i>{String(index + 1).padStart(2, "0")}</i>{item}</span>
+          ))}
         </div>
-      </section>
 
-      <div id="contenido">
-        <section className="manifesto section-pad" id="perfil">
-          <div className="section-label" data-reveal>
-            <span>01</span>
-            <p>Una práctica entre forma y función</p>
-          </div>
-          <div className="manifesto-copy" data-reveal>
-            <p className="eyebrow">Enfoque</p>
-            <h2>
-              Construyo identidades digitales que se sienten tan claras como
-              inesperadas.
-            </h2>
-            <div className="manifesto-detail">
-              <p>
-                Traduzco ideas complejas en sistemas visuales precisos. Cada
-                interacción tiene un propósito: orientar, provocar curiosidad y
-                dejar una impresión duradera.
-              </p>
-              <ul aria-label="Servicios">
-                <li>Dirección creativa</li>
-                <li>Diseño de producto</li>
-                <li>Desarrollo interactivo</li>
-                <li>Motion y 3D</li>
-              </ul>
+        <section className="kinetic-story" ref={kineticSectionRef} aria-labelledby="kinetic-title">
+          <div className="kinetic-sticky">
+            <div className="kinetic-grid" aria-hidden="true" />
+            <div className="kinetic-arc" aria-hidden="true"><i /><i /><i /></div>
+
+            <div className="kinetic-heading">
+              <span className="section-index">{t.scene.index}</span>
+              <h2 id="kinetic-title">
+                <span>{t.scene.lineOne}</span>
+                <span className="outline-text">{t.scene.lineTwo}</span>
+              </h2>
+            </div>
+
+            <div className="kinetic-portal" aria-hidden="true">
+              <div className="portal-topline">
+                <span>{t.scene.cardLabel}</span>
+                <span>ET / 001</span>
+              </div>
+              <div className="portal-core">
+                <span className="core-ring ring-one" />
+                <span className="core-ring ring-two" />
+                <span className="core-ring ring-three" />
+                <span className="core-node node-one" />
+                <span className="core-node node-two" />
+                <span className="core-node node-three" />
+                <strong>ET</strong>
+              </div>
+              <div className="portal-terminal">
+                <span>MODEL / PRODUCT / RELIABILITY</span>
+                <span>LATENCY&nbsp;&nbsp; 24ms</span>
+                <span>UPTIME&nbsp;&nbsp;&nbsp; 99.99%</span>
+              </div>
+              <div className="portal-status"><i />{t.scene.cardStatus}</div>
+            </div>
+
+            <div className="kinetic-copy">
+              <p>{t.scene.body}</p>
+              <a href="#capabilities">{t.scene.cta}<span>↘</span></a>
+            </div>
+
+            <div className="kinetic-counter" aria-hidden="true">
+              <span>01</span><i /><span>02</span>
             </div>
           </div>
         </section>
 
-        <section className="work section-pad" id="trabajo">
-          <div className="work-heading" data-reveal>
-            <p className="eyebrow">Trabajo seleccionado</p>
-            <h2>Proyectos con pulso propio.</h2>
+        <section className="section about" id="profile">
+          <div className="section-index" data-reveal>{t.about.index}</div>
+          <div className="about-layout">
+            <h2 data-reveal>{t.about.title}</h2>
+            <div className="about-copy" data-reveal>
+              <p>{t.about.body}</p>
+              <blockquote>{t.about.note}</blockquote>
+              <div className="signature" aria-label="Edgar Talavera"><span>EDGAR</span><span>TALAVERA</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section capabilities" id="capabilities">
+          <div className="capabilities-heading">
+            <div className="section-index" data-reveal>{t.capabilities.index}</div>
+            <h2 data-reveal>{t.capabilities.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h2>
+            <p data-reveal>{t.capabilities.intro}</p>
           </div>
 
-          <div className="project-list">
-            {projects.map((project) => (
-              <article className="project-card" key={project.number} data-reveal>
-                <div className={project.className} aria-hidden="true">
-                  <div className="visual-grid" />
-                  <div className="visual-object" />
-                  <span>{project.number}</span>
+          <div className="capability-list">
+            {t.capabilities.items.map((item) => (
+              <article className="capability-card" data-reveal key={item.number}>
+                <span className="card-number">{item.number}</span>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
                 </div>
-                <div className="project-info">
-                  <div>
-                    <p>{project.number}</p>
+                <ul>
+                  {item.tags.map((tag) => <li key={tag}>{tag}</li>)}
+                </ul>
+                <span className="card-cross" aria-hidden="true">+</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="projects" id="work" ref={projectSectionRef}>
+          <div className="projects-sticky">
+            <div className="projects-intro">
+              <div className="section-index">{t.projects.index}</div>
+              <h2>{t.projects.title}</h2>
+              <div className="projects-progress" aria-hidden="true"><i /></div>
+            </div>
+            <div className="project-track" ref={projectTrackRef}>
+              {t.projects.list.map((project) => (
+                <article className={`project-card tone-${project.tone}`} key={project.number}>
+                  <div className="project-visual" aria-hidden="true">
+                    <span className="project-scan" />
+                    <div className="project-mesh" />
+                    <span className="visual-code">SYS/{project.number}</span>
+                    <span className="visual-shape shape-a" />
+                    <span className="visual-shape shape-b" />
+                    <strong>{project.title.slice(0, 2).toUpperCase()}</strong>
+                  </div>
+                  <div className="project-content">
+                    <div className="project-meta"><span>{project.number}</span><span>{project.type}</span></div>
                     <h3>{project.title}</h3>
-                  </div>
-                  <div>
-                    <p className="project-type">{project.type}</p>
                     <p>{project.description}</p>
-                    <button type="button" aria-label={`Abrir ${project.title}`}>
-                      Ver caso <span>↗</span>
-                    </button>
+                    <small>{project.stack}</small>
+                    <div className="project-links">
+                      <a href={project.live} target="_blank" rel="noreferrer">{t.projects.view} <span>↗</span></a>
+                      {project.github && <a href={project.github} target="_blank" rel="noreferrer">{t.projects.code} <span>↗</span></a>}
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          <p className="concept-note">
-            Proyectos conceptuales de muestra — reemplázalos por tus casos reales.
-          </p>
-        </section>
-
-        <section className="method section-pad">
-          <div className="section-label" data-reveal>
-            <span>02</span>
-            <p>Cómo trabajo</p>
-          </div>
-          <div className="method-grid">
-            {[
-              ["01", "Descubrir", "Entender el contexto, la audiencia y la tensión que hace único al proyecto."],
-              ["02", "Definir", "Convertir hallazgos en una dirección visual clara y un sistema que pueda crecer."],
-              ["03", "Construir", "Diseñar, animar y desarrollar con atención obsesiva al ritmo y al detalle."],
-            ].map(([number, title, copy]) => (
-              <article key={number} data-reveal>
-                <p>{number}</p>
-                <h3>{title}</h3>
-                <p>{copy}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="contact" id="contacto">
-          <div className="contact-top" data-reveal>
-            <p className="eyebrow">¿Tienes una idea en movimiento?</p>
-            <p>Ciudad de México · Disponible globalmente</p>
-          </div>
-          <a className="contact-link" href="mailto:hola@tudominio.com" data-reveal>
-            <span>Hablemos</span>
-            <span>↗</span>
-          </a>
-          <footer>
-            <p>© 2026 Tu Nombre</p>
-            <div>
-              <a href="#inicio">Instagram</a>
-              <a href="#inicio">LinkedIn</a>
-              <a href="#inicio">Behance</a>
+                </article>
+              ))}
+              <div className="project-end" aria-hidden="true"><span>ET</span><i /></div>
             </div>
-            <a href="#inicio">Volver arriba ↑</a>
-          </footer>
+          </div>
         </section>
-      </div>
-    </main>
+
+        <section className="section stack-section">
+          <div className="section-index" data-reveal>{t.stack.index}</div>
+          <div className="stack-heading">
+            <h2 data-reveal>{t.stack.title}</h2>
+            <span className="stack-radar" aria-hidden="true"><i /><b /></span>
+          </div>
+          <div className="stack-list">
+            {t.stack.groups.map((group, index) => (
+              <div className="stack-row" data-reveal key={group.label}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{group.label}</h3>
+                <p>{group.items}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="contact" id="contact">
+          <div className="contact-noise" aria-hidden="true" />
+          <div className="section-index" data-reveal>{t.contact.index}</div>
+          <div className="contact-layout">
+            <div>
+              <h2 data-reveal>{t.contact.title}<span>{t.contact.accent}</span></h2>
+              <p className="contact-body" data-reveal>{t.contact.body}</p>
+            </div>
+            <div className="contact-action" data-reveal>
+              <a className="email-link" href="mailto:edgar.developer.talavera77@gmail.com">
+                <span>{t.contact.email}</span><i>↗</i>
+              </a>
+              <small>edgar.developer.talavera77@gmail.com</small>
+            </div>
+          </div>
+          <div className="contact-footer">
+            <p><span className="pulse" />{t.contact.availability}</p>
+            <div className="social-links">
+              <span>{t.contact.social}</span>
+              <a href="https://linkedin.com/in/devtaed/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+              <a href="https://github.com/eduardo-talavera" target="_blank" rel="noreferrer">GitHub ↗</a>
+              <a href="https://twitter.com/ed_talavera" target="_blank" rel="noreferrer">X ↗</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <span>© {new Date().getFullYear()}</span>
+        <span>{t.footer}</span>
+        <a href="#top">TOP ↑</a>
+      </footer>
+    </>
   );
 }
