@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { AmbientSound } from "../components/ambient-sound";
 import { KineticTerminal } from "../components/kinetic-terminal";
 import { SignalField } from "../components/signal-field";
 
@@ -632,6 +633,7 @@ export default function Home() {
             <span>/</span>
             <span className={language === "en" ? "is-active" : ""}>EN</span>
           </button>
+          <AmbientSound language={language} />
           <button className="tool-button theme-button" type="button" onClick={switchTheme} aria-label={t.utility.theme}>
             <span className="theme-orbit" aria-hidden="true"><i /></span>
           </button>
