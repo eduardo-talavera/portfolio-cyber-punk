@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { KineticTerminal } from "../components/kinetic-terminal";
 import { SignalField } from "../components/signal-field";
 
 const content = {
@@ -255,11 +256,37 @@ const content = {
 type Language = keyof typeof content;
 type Theme = "dark" | "light";
 
+const projectImages: Record<string, { src: string; width: number; height: number; position: string }> = {
+  "01": {
+    src: "/images/projects/tickets-app.webp",
+    width: 2862,
+    height: 1626,
+    position: "50% 48%",
+  },
+  "02": {
+    src: "/images/projects/tropix-ui.webp",
+    width: 1885,
+    height: 887,
+    position: "50% 40%",
+  },
+  "04": {
+    src: "/images/projects/ip-tracker.webp",
+    width: 1506,
+    height: 795,
+    position: "50% 22%",
+  },
+};
+
 export default function Home() {
   const [language, setLanguage] = useState<Language>("es");
   const [theme, setTheme] = useState<Theme>("dark");
   const [menuOpen, setMenuOpen] = useState(false);
+  const astronautRef = useRef<HTMLDivElement>(null);
+  const spaceshipRef = useRef<HTMLDivElement>(null);
   const kineticSectionRef = useRef<HTMLElement>(null);
+  const profileSectionRef = useRef<HTMLElement>(null);
+  const capabilitiesSectionRef = useRef<HTMLElement>(null);
+  const capabilitiesHeadingRef = useRef<HTMLDivElement>(null);
   const projectSectionRef = useRef<HTMLElement>(null);
   const projectTrackRef = useRef<HTMLDivElement>(null);
   const t = content[language];
@@ -296,6 +323,10 @@ export default function Home() {
       const root = document.documentElement;
       const clamp = (value: number) => Math.min(1, Math.max(0, value));
       const smooth = (value: number) => value * value * (3 - 2 * value);
+      const lerp = (start: number, end: number, progress: number) =>
+        start + (end - start) * progress;
+      const documentTop = (element: HTMLElement, scrollY: number) =>
+        element.getBoundingClientRect().top + scrollY;
 
       root.dataset.reducedMotion = reduceMotion ? "true" : "false";
 
@@ -348,6 +379,118 @@ export default function Home() {
         section.style.setProperty("--arc-rotation", `${-105 + reveal * 138}deg`);
       };
 
+      const updateAstronaut = (scrollY: number, velocity = 0) => {
+        const astronaut = astronautRef.current;
+        const kineticSection = kineticSectionRef.current;
+        if (!astronaut || !kineticSection) return;
+
+        const kineticTop = documentTop(kineticSection, scrollY);
+        const fadeDistance = Math.max(180, window.innerHeight * 0.32);
+        const sectionVisibility =
+          1 - smooth(clamp((scrollY - (kineticTop - fadeDistance)) / fadeDistance));
+
+        if (reduceMotion) {
+          astronaut.style.opacity = scrollY < kineticTop ? "0.62" : "0";
+          return;
+        }
+
+        const pageRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const progress = clamp(scrollY / pageRange);
+        const mobile = window.innerWidth <= 700;
+        const width = astronaut.offsetWidth;
+        const phase = progress * Math.PI * 4.2;
+        const inwardDrift =
+          (0.5 + Math.sin(phase) * 0.5) * window.innerWidth * (mobile ? 0.035 : 0.11);
+        const x = window.innerWidth - width - (mobile ? 10 : window.innerWidth * 0.035) - inwardDrift;
+        const viewportY =
+          window.innerHeight * (0.1 + progress * (mobile ? 0.47 : 0.62)) +
+          Math.sin(phase * 1.55) * (mobile ? 7 : 16);
+        const documentY = scrollY + viewportY;
+        const velocityTilt = Math.max(-5, Math.min(5, velocity * 0.12));
+        const rotation = -10 + Math.sin(phase) * 11 + velocityTilt;
+        const scale = 0.96 + Math.sin(phase * 0.72) * 0.035;
+        const opacity = (mobile ? 0.62 : 0.84) * sectionVisibility;
+
+        astronaut.style.transform = `translate3d(${x}px, ${documentY}px, 0) rotate(${rotation}deg) scale(${scale})`;
+        astronaut.style.opacity = opacity.toFixed(3);
+      };
+
+      const updateSpaceship = (scrollY: number, velocity = 0) => {
+        const spaceship = spaceshipRef.current;
+        const kineticSection = kineticSectionRef.current;
+        const capabilitiesSection = capabilitiesSectionRef.current;
+        const capabilitiesHeading = capabilitiesHeadingRef.current;
+        if (!spaceship || !kineticSection || !capabilitiesSection || !capabilitiesHeading) return;
+
+        const mobile = window.innerWidth <= 700;
+        const width = spaceship.offsetWidth;
+        const height = spaceship.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const kineticTop = documentTop(kineticSection, scrollY);
+        const capabilitiesTop = documentTop(capabilitiesSection, scrollY);
+        const headingRect = capabilitiesHeading.getBoundingClientRect();
+        const headingTop = headingRect.top + scrollY;
+        const entryStart = capabilitiesTop - viewportHeight * 0.82;
+        const entryEnd = capabilitiesTop - viewportHeight * 0.12;
+        const heroX = mobile ? 4 : window.innerWidth * 0.04;
+        const hiddenRightX = window.innerWidth + width * 0.18;
+        const headingInset = mobile ? 8 : Math.max(20, headingRect.width * 0.04);
+        const restingX = Math.min(
+          headingRect.left + headingInset,
+          Math.max(headingRect.left, headingRect.right - width - headingInset),
+        );
+        const restingDocumentY =
+          headingTop + Math.max(0, headingRect.height - height - (mobile ? 18 : 28));
+        const baseOpacity = 1;
+        const velocityTilt = Math.max(-3, Math.min(3, velocity * -0.08));
+        let x = hiddenRightX;
+        let documentY = scrollY + viewportHeight * 0.72;
+        let rotation = -12;
+        let scale = 0.96;
+        let facing = 1;
+        let opacity = 0;
+
+        if (reduceMotion) {
+          const inHero = scrollY < kineticTop;
+          const inCapabilities = scrollY >= entryStart;
+          x = inCapabilities ? restingX : heroX;
+          documentY = inCapabilities
+            ? restingDocumentY
+            : scrollY + viewportHeight * 0.74;
+          rotation = inCapabilities ? -4 : 8;
+          facing = inCapabilities ? -1 : 1;
+          opacity = inHero || inCapabilities ? baseOpacity : 0;
+        } else if (scrollY < kineticTop) {
+          const rawDeparture = clamp(scrollY / Math.max(1, kineticTop));
+          const departure = smooth(rawDeparture);
+          x = lerp(heroX, hiddenRightX, departure);
+          documentY =
+            scrollY +
+            lerp(viewportHeight * 0.74, viewportHeight * 0.58, departure) -
+            Math.sin(departure * Math.PI) * viewportHeight * (mobile ? 0.09 : 0.2);
+          rotation = lerp(8, 20, departure) + velocityTilt;
+          scale = lerp(1, 0.9, departure);
+          opacity =
+            baseOpacity *
+            (1 - smooth(clamp((rawDeparture - 0.62) / 0.38)));
+        } else if (scrollY >= entryStart) {
+          const rawEntry = clamp((scrollY - entryStart) / Math.max(1, entryEnd - entryStart));
+          const entry = smooth(rawEntry);
+          x = lerp(hiddenRightX, restingX, entry);
+          documentY =
+            lerp(scrollY + viewportHeight * 0.78, restingDocumentY, entry) -
+            Math.sin(entry * Math.PI) * viewportHeight * (mobile ? 0.1 : 0.2);
+          rotation = lerp(-18, 4, entry) + velocityTilt;
+          scale = lerp(0.9, 1, entry);
+          facing = -1;
+          opacity = baseOpacity * smooth(clamp(rawEntry / 0.3));
+        }
+
+        spaceship.style.transform =
+          `translate3d(${x}px, ${documentY}px, 0) rotate(${rotation}deg) scale3d(${facing * scale}, ${scale}, 1)`;
+        spaceship.style.opacity = opacity.toFixed(3);
+      };
+
       const updateProjects = (scrollY: number) => {
         const section = projectSectionRef.current;
         const track = projectTrackRef.current;
@@ -368,12 +511,17 @@ export default function Home() {
         root.style.setProperty("--scroll-y", `${scrollY}px`);
         root.style.setProperty("--scroll-velocity", Math.min(Math.abs(velocity), 30).toString());
         updateKineticScene(scrollY);
+        updateAstronaut(scrollY, velocity);
+        updateSpaceship(scrollY, velocity);
         updateProjects(scrollY);
       };
 
       if (reduceMotion) {
+        const onReducedScroll = () => updateGlobalMotion(window.scrollY);
         updateGlobalMotion(window.scrollY);
+        window.addEventListener("scroll", onReducedScroll, { passive: true });
         cleanup = () => {
+          window.removeEventListener("scroll", onReducedScroll);
           delete root.dataset.reducedMotion;
         };
         return;
@@ -448,6 +596,11 @@ export default function Home() {
       <SignalField />
       <div className="ambient ambient-one" aria-hidden="true" />
       <div className="ambient ambient-two" aria-hidden="true" />
+      <div ref={astronautRef} className="astronaut-float" aria-hidden="true">
+        <div className="astronaut-float__bob">
+          <img src="/images/astronaut.png" alt="" draggable={false} decoding="async" />
+        </div>
+      </div>
 
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Edgar Talavera — Home">
@@ -486,6 +639,12 @@ export default function Home() {
       </header>
 
       <main id="main">
+        <div ref={spaceshipRef} className="spaceship-float" aria-hidden="true">
+          <div className="spaceship-float__drift">
+            <img src="/images/spaceship.png" alt="" draggable={false} decoding="async" />
+          </div>
+        </div>
+
         <section className="hero" id="top">
           <div className="hero-grid" aria-hidden="true" />
           <div className="hero-orbit orbit-one" aria-hidden="true" />
@@ -533,26 +692,8 @@ export default function Home() {
               </h2>
             </div>
 
-            <div className="kinetic-portal" aria-hidden="true">
-              <div className="portal-topline">
-                <span>{t.scene.cardLabel}</span>
-                <span>ET / 001</span>
-              </div>
-              <div className="portal-core">
-                <span className="core-ring ring-one" />
-                <span className="core-ring ring-two" />
-                <span className="core-ring ring-three" />
-                <span className="core-node node-one" />
-                <span className="core-node node-two" />
-                <span className="core-node node-three" />
-                <strong>ET</strong>
-              </div>
-              <div className="portal-terminal">
-                <span>MODEL / PRODUCT / RELIABILITY</span>
-                <span>LATENCY&nbsp;&nbsp; 24ms</span>
-                <span>UPTIME&nbsp;&nbsp;&nbsp; 99.99%</span>
-              </div>
-              <div className="portal-status"><i />{t.scene.cardStatus}</div>
+            <div className="kinetic-portal">
+              <KineticTerminal language={language} />
             </div>
 
             <div className="kinetic-copy">
@@ -566,7 +707,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section about" id="profile">
+        <section className="section about" id="profile" ref={profileSectionRef}>
           <div className="section-index" data-reveal>{t.about.index}</div>
           <div className="about-layout">
             <h2 data-reveal>{t.about.title}</h2>
@@ -578,8 +719,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section capabilities" id="capabilities">
-          <div className="capabilities-heading">
+        <section className="section capabilities" id="capabilities" ref={capabilitiesSectionRef}>
+          <div className="capabilities-heading" ref={capabilitiesHeadingRef}>
             <div className="section-index" data-reveal>{t.capabilities.index}</div>
             <h2 data-reveal>{t.capabilities.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h2>
             <p data-reveal>{t.capabilities.intro}</p>
@@ -610,28 +751,50 @@ export default function Home() {
               <div className="projects-progress" aria-hidden="true"><i /></div>
             </div>
             <div className="project-track" ref={projectTrackRef}>
-              {t.projects.list.map((project) => (
-                <article className={`project-card tone-${project.tone}`} key={project.number}>
-                  <div className="project-visual" aria-hidden="true">
-                    <span className="project-scan" />
-                    <div className="project-mesh" />
-                    <span className="visual-code">SYS/{project.number}</span>
-                    <span className="visual-shape shape-a" />
-                    <span className="visual-shape shape-b" />
-                    <strong>{project.title.slice(0, 2).toUpperCase()}</strong>
-                  </div>
-                  <div className="project-content">
-                    <div className="project-meta"><span>{project.number}</span><span>{project.type}</span></div>
-                    <h3>{project.title}</h3>
-                    <p>{project.description}</p>
-                    <small>{project.stack}</small>
-                    <div className="project-links">
-                      <a href={project.live} target="_blank" rel="noreferrer">{t.projects.view} <span>↗</span></a>
-                      {project.github && <a href={project.github} target="_blank" rel="noreferrer">{t.projects.code} <span>↗</span></a>}
+              {t.projects.list.map((project) => {
+                const projectImage = projectImages[project.number];
+
+                return (
+                  <article className={`project-card tone-${project.tone}`} key={project.number}>
+                    <div
+                      className={`project-visual${projectImage ? " has-image" : ""}`}
+                      aria-hidden={projectImage ? undefined : true}
+                    >
+                      <span className="project-scan" aria-hidden="true" />
+                      <div className="project-mesh" aria-hidden="true" />
+                      {projectImage && (
+                        <div className="project-image-frame">
+                          <img
+                            className="project-image"
+                            src={projectImage.src}
+                            width={projectImage.width}
+                            height={projectImage.height}
+                            style={{ objectPosition: projectImage.position }}
+                            alt={language === "es" ? `Vista previa de ${project.title}` : `${project.title} preview`}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <span className="project-image-overlay" aria-hidden="true" />
+                        </div>
+                      )}
+                      <span className="visual-code" aria-hidden="true">SYS/{project.number}</span>
+                      <span className="visual-shape shape-a" aria-hidden="true" />
+                      <span className="visual-shape shape-b" aria-hidden="true" />
+                      <strong aria-hidden="true">{project.title.slice(0, 2).toUpperCase()}</strong>
                     </div>
-                  </div>
-                </article>
-              ))}
+                    <div className="project-content">
+                      <div className="project-meta"><span>{project.number}</span><span>{project.type}</span></div>
+                      <h3>{project.title}</h3>
+                      <p>{project.description}</p>
+                      <small>{project.stack}</small>
+                      <div className="project-links">
+                        <a href={project.live} target="_blank" rel="noreferrer">{t.projects.view} <span>↗</span></a>
+                        {project.github && <a href={project.github} target="_blank" rel="noreferrer">{t.projects.code} <span>↗</span></a>}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
               <div className="project-end" aria-hidden="true"><span>ET</span><i /></div>
             </div>
           </div>
