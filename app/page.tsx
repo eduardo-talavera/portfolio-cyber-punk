@@ -531,6 +531,7 @@ export default function Home() {
       const lenis = new Lenis({
         duration: 1.15,
         smoothWheel: true,
+        allowNestedScroll: true,
         wheelMultiplier: 0.9,
         touchMultiplier: 1.1,
       });
