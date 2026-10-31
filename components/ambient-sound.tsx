@@ -1,8 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-
-type Language = "es" | "en";
+import type { Language } from "../content/portfolio";
 
 const TRACK_SOURCE = "/audio/cyberpunk-ambient.mp3";
 const TARGET_VOLUME = 0.34;
