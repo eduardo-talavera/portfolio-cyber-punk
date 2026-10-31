@@ -1,0 +1,299 @@
+/* Projects section styles */
+.projects {
+  position: relative;
+  height: 440vh;
+  background: var(--bg);
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  overflow: hidden;
+}
+
+.intro {
+  position: relative;
+  z-index: 5;
+  flex: 0 0 min(42vw, 42rem);
+  padding: 7rem 4vw 2rem;
+}
+
+.intro h2 { margin-top: 2.5rem; }
+
+.progress {
+  width: 100%;
+  height: 1px;
+  margin-top: 4rem;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.progress i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--acid);
+  transform: scaleX(var(--project-progress));
+  transform-origin: left;
+}
+
+.track {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2rem;
+  padding-right: 8vw;
+  will-change: transform;
+}
+
+.card {
+  display: grid;
+  width: min(71vw, 72rem);
+  height: min(72vh, 46rem);
+  min-height: 34rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 2rem 8rem var(--shadow);
+  grid-template-columns: 1.12fr 0.88fr;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+}
+
+.visual {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--tone) 32%, transparent), transparent 38%),
+    linear-gradient(135deg, color-mix(in srgb, var(--tone) 10%, var(--bg-elevated)), var(--bg));
+}
+
+.toneLime { --tone: var(--acid); }
+.toneCyan { --tone: var(--cyan); }
+.toneMagenta { --tone: var(--magenta); }
+.toneViolet { --tone: var(--violet); }
+
+.mesh {
+  position: absolute;
+  z-index: 0;
+  inset: -10%;
+  opacity: 0.48;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--tone) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--tone) 22%, transparent) 1px, transparent 1px);
+  background-size: 2.8rem 2.8rem;
+  transform: perspective(500px) rotateX(55deg) rotateZ(-18deg) scale(1.4);
+}
+
+.visual strong {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  color: transparent;
+  font: 700 clamp(8rem, 16vw, 15rem)/1 "Manrope", sans-serif;
+  letter-spacing: -0.12em;
+  -webkit-text-stroke: 1px var(--tone);
+  text-shadow: 0 0 3rem color-mix(in srgb, var(--tone) 25%, transparent);
+  transform: translate(-50%, -50%);
+}
+
+.hasImage .mesh {
+  z-index: 2;
+  opacity: 0.16;
+  mix-blend-mode: screen;
+}
+
+.hasImage strong { z-index: 3; opacity: 0.12; }
+
+.imageFrame {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  background: #030807;
+  box-shadow: inset 0 0 5rem rgba(0, 0, 0, 0.58);
+  transition: box-shadow 450ms ease;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.78) contrast(1.13) brightness(0.68);
+  transform: scale(1.015);
+  transition: filter 450ms ease, transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--tone) 55%, transparent);
+  background:
+    linear-gradient(105deg, color-mix(in srgb, var(--tone) 18%, transparent), transparent 38%),
+    linear-gradient(180deg, rgba(3, 8, 7, 0.08), rgba(3, 8, 7, 0.4)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px);
+  box-shadow:
+    inset 0 0 4rem rgba(0, 0, 0, 0.52),
+    inset 0 0 0 0.45rem rgba(3, 8, 7, 0.34);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .card:hover .imageFrame {
+    box-shadow:
+      inset 0 0 5rem rgba(0, 0, 0, 0.46),
+      inset 0 0 2.5rem color-mix(in srgb, var(--tone) 15%, transparent);
+  }
+
+  .card:hover .image {
+    filter: saturate(0.98) contrast(1.08) brightness(0.82);
+    transform: scale(1.05);
+  }
+}
+
+.scan {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--tone);
+  box-shadow: 0 0 1.2rem var(--tone);
+  animation: project-scan 5s infinite ease-in-out;
+}
+
+.visualCode {
+  position: absolute;
+  z-index: 2;
+  top: 1.5rem;
+  left: 1.5rem;
+  color: var(--tone);
+  font: 400 0.64rem/1 "DM Mono", monospace;
+  letter-spacing: 0.12em;
+}
+
+.visualShape {
+  position: absolute;
+  z-index: 2;
+  border: 1px solid var(--tone);
+}
+
+.shapeA {
+  right: 12%;
+  bottom: 15%;
+  width: 4rem;
+  height: 4rem;
+  transform: rotate(45deg);
+}
+
+.shapeB {
+  top: 15%;
+  right: 18%;
+  width: 1rem;
+  height: 1rem;
+  background: var(--tone);
+  box-shadow: 0 0 1.5rem var(--tone);
+}
+
+.content {
+  display: flex;
+  padding: clamp(2rem, 3.3vw, 3.6rem);
+  flex-direction: column;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--tone);
+  font: 400 0.63rem/1 "DM Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.content h3 {
+  margin: auto 0 1.5rem;
+  font-size: clamp(2.5rem, 4vw, 5rem);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.content p { margin: 0; color: var(--muted); line-height: 1.65; }
+
+.content small {
+  margin-top: 1.3rem;
+  color: var(--faint);
+  font: 400 0.62rem/1.4 "DM Mono", monospace;
+}
+
+.links { display: flex; margin-top: 2.5rem; gap: 1.8rem; }
+
+.links a {
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--line);
+  font: 500 0.67rem/1 "DM Mono", monospace;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease;
+}
+
+.links a:hover { border-color: var(--tone); color: var(--tone); }
+
+.end { display: grid; width: 20rem; flex: none; place-items: center; }
+
+.end span {
+  color: transparent;
+  font-size: 8rem;
+  font-weight: 700;
+  -webkit-text-stroke: 1px var(--faint);
+}
+
+.end i { width: 8rem; height: 1px; background: var(--acid); }
+
+@keyframes project-scan {
+  0%, 100% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.8; }
+  85% { opacity: 0.4; }
+  90% { transform: translateY(44rem); opacity: 0; }
+}
+
+@media (max-width: 1100px) {
+  .card { width: 82vw; }
+}
+
+@media (max-width: 900px) {
+  .projects { height: auto; padding: 8rem 4vw; }
+  .sticky { position: static; display: block; height: auto; overflow: visible; }
+  .intro { width: 100%; padding: 0 0 4rem; }
+  .progress { display: none; }
+  .track { display: grid; width: 100%; gap: 2rem; padding: 0; transform: none !important; }
+  .card { width: 100%; height: auto; min-height: 0; }
+  .visual, .content { min-height: 30rem; }
+  .end { display: none; }
+}
+
+@media (max-width: 650px) {
+  .projects { padding-inline: 1.25rem; }
+  .card { grid-template-columns: 1fr; }
+  .visual { min-height: 22rem; border-right: 0; border-bottom: 1px solid var(--line); }
+  .content { min-height: 27rem; padding: 1.5rem; }
+  .content h3 { margin-top: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects { height: auto !important; padding: 8rem 4vw; }
+  .sticky { position: static; display: block; height: auto; overflow: visible; }
+  .intro { width: 100%; padding: 0 0 4rem; }
+  .progress { display: none; }
+  .track { display: grid; width: 100%; padding: 0; transform: none !important; }
+  .card { width: 100%; }
+  .end { display: none; }
+}

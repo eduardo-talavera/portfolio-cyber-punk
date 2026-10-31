@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Language } from "../content/portfolio";
+import styles from "./ambient-sound.module.css";
 
 const TRACK_SOURCE = "/audio/cyberpunk-ambient.mp3";
 const TARGET_VOLUME = 0.34;
@@ -193,7 +194,12 @@ export function AmbientSound({ language }: { language: Language }) {
         }}
       />
       <button
-        className={`tool-button sound-button${playing ? " is-playing" : ""}${autoplayBlocked && enabled ? " is-awaiting" : ""}`}
+        className={[
+          "tool-button",
+          styles.soundButton,
+          playing ? styles.playing : "",
+          autoplayBlocked && enabled ? styles.awaiting : "",
+        ].filter(Boolean).join(" ")}
         type="button"
         data-ambient-toggle
         aria-label={copy.name}
@@ -202,7 +208,7 @@ export function AmbientSound({ language }: { language: Language }) {
         title={title}
         onClick={toggleSound}
       >
-        <span className="sound-glyph" aria-hidden="true">
+        <span className={styles.soundGlyph} aria-hidden="true">
           <i />
           <i />
           <i />

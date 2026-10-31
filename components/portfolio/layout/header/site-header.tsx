@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { Language, PortfolioCopy } from "../../content/portfolio";
-import { AmbientSound } from "../ambient-sound";
+import type { Language, PortfolioCopy } from "../../../../content/portfolio";
+import { AmbientSound } from "../../../ambient-sound";
+import styles from "./site-header.module.css";
 
 interface SiteHeaderProps {
   language: Language;
@@ -21,14 +22,14 @@ export function SiteHeader({
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className="site-header">
-      <a className="brand" href="#top" aria-label="Edgar Talavera — Home">
-        <span className="brand-mark">ET</span>
-        <span className="brand-copy">EDGAR / TALAVERA</span>
+    <header className={styles.header}>
+      <a className={styles.brand} href="#top" aria-label="Edgar Talavera — Home">
+        <span className={styles.brandMark}>ET</span>
+        <span className={styles.brandCopy}>EDGAR / TALAVERA</span>
       </a>
 
       <button
-        className="menu-toggle"
+        className={styles.menuToggle}
         type="button"
         aria-label={copy.utility.menu}
         aria-expanded={menuOpen}
@@ -41,7 +42,7 @@ export function SiteHeader({
 
       <nav
         id="primary-navigation"
-        className={menuOpen ? "site-nav is-open" : "site-nav"}
+        className={`${styles.nav} ${menuOpen ? styles.navOpen : ""}`}
         aria-label="Primary navigation"
       >
         <a href="#profile" onClick={closeMenu}>{copy.nav.profile}</a>
@@ -50,25 +51,25 @@ export function SiteHeader({
         <a href="#contact" onClick={closeMenu}>{copy.nav.contact}</a>
       </nav>
 
-      <div className="header-tools">
+      <div className={styles.tools}>
         <button
-          className="tool-button language-button"
+          className={`tool-button ${styles.languageButton}`}
           type="button"
           onClick={onLanguageChange}
           aria-label={copy.utility.language}
         >
-          <span className={language === "es" ? "is-active" : ""}>ES</span>
+          <span className={language === "es" ? styles.active : ""}>ES</span>
           <span>/</span>
-          <span className={language === "en" ? "is-active" : ""}>EN</span>
+          <span className={language === "en" ? styles.active : ""}>EN</span>
         </button>
         <AmbientSound language={language} />
         <button
-          className="tool-button theme-button"
+          className={`tool-button ${styles.themeButton}`}
           type="button"
           onClick={onThemeChange}
           aria-label={copy.utility.theme}
         >
-          <span className="theme-orbit" aria-hidden="true"><i /></span>
+          <span className={styles.themeOrbit} aria-hidden="true"><i /></span>
         </button>
       </div>
     </header>

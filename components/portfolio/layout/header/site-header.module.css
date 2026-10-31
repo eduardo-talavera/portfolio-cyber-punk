@@ -1,0 +1,212 @@
+/* Site header styles */
+.header {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 100%;
+  height: 5rem;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 3vw;
+  border-bottom: 1px solid var(--line);
+  background: var(--header);
+  backdrop-filter: blur(18px) saturate(1.4);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 0.75rem;
+}
+
+.brandMark {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--acid);
+  color: var(--acid);
+  font: 500 0.65rem/1 "DM Mono", monospace;
+  place-items: center;
+  transform: rotate(45deg);
+}
+
+.brandMark::first-letter {
+  transform: rotate(-45deg);
+}
+
+.brandCopy {
+  font: 500 0.68rem/1 "DM Mono", monospace;
+  letter-spacing: 0.13em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.4rem, 2.8vw, 3.4rem);
+}
+
+.nav a {
+  position: relative;
+  color: var(--muted);
+  font: 400 0.68rem/1 "DM Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.nav a::after {
+  position: absolute;
+  bottom: -0.6rem;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  content: "";
+  background: var(--acid);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 220ms ease;
+}
+
+.nav a:hover,
+.nav a:focus-visible {
+  color: var(--ink);
+}
+
+.nav a:hover::after,
+.nav a:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.65rem;
+}
+
+.languageButton {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0 0.72rem;
+  color: var(--faint);
+  font: 400 0.62rem/1 "DM Mono", monospace;
+}
+
+.active {
+  color: var(--acid);
+}
+
+.themeButton {
+  display: grid;
+  width: 2.25rem;
+  padding: 0;
+  place-items: center;
+}
+
+.themeOrbit {
+  position: relative;
+  display: block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+}
+
+.themeOrbit::after {
+  position: absolute;
+  top: -0.25rem;
+  left: 0.39rem;
+  width: 1px;
+  height: 1.35rem;
+  content: "";
+  background: var(--ink);
+  transform: rotate(45deg);
+}
+
+.themeOrbit i {
+  position: absolute;
+  z-index: 1;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--acid);
+}
+
+.menuToggle {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .brandCopy { display: none; }
+}
+
+@media (max-width: 900px) {
+  .header {
+    height: 4.5rem;
+    grid-template-columns: 1fr auto auto;
+    gap: 0.7rem;
+  }
+
+  .menuToggle {
+    display: flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0.55rem;
+    border: 1px solid var(--line);
+    background: transparent;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.34rem;
+    cursor: pointer;
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .menuToggle span {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .nav {
+    position: fixed;
+    top: 4.5rem;
+    right: 0;
+    left: 0;
+    display: flex;
+    padding: 2rem 4vw;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-elevated);
+    flex-direction: column;
+    align-items: flex-start;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-1rem);
+    transition: opacity 200ms ease, transform 200ms ease;
+  }
+
+  .navOpen {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .nav a {
+    width: 100%;
+    padding: 0.7rem 0;
+    font-size: 0.78rem;
+  }
+
+  .tools { grid-column: 2; grid-row: 1; }
+}
+
+@media (max-width: 650px) {
+  .header { padding-inline: 1rem; }
+  .languageButton { height: 2rem; padding: 0 0.5rem; }
+  .themeButton { width: 2rem; height: 2rem; }
+}

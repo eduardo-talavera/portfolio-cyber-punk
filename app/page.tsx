@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { SiteFooter, SiteHeader } from "../components/portfolio/layout";
 import {
   AboutSection,
   CapabilitiesSection,
@@ -8,15 +9,14 @@ import {
   Hero,
   KineticStory,
   ProjectsSection,
-  SiteFooter,
   StackSection,
-} from "../components/portfolio/portfolio-content";
-import { SiteHeader } from "../components/portfolio/site-header";
+} from "../components/portfolio/sections";
 import { SignalField } from "../components/signal-field";
 import { portfolioContent } from "../content/portfolio";
 import { usePortfolioMotion } from "../hooks/use-portfolio-motion";
 import { usePortfolioPreferences } from "../hooks/use-portfolio-preferences";
 import { useRevealOnScroll } from "../hooks/use-reveal-on-scroll";
+import styles from "./page.module.css";
 
 export default function Home() {
   const astronautRef = useRef<HTMLDivElement>(null);
@@ -44,10 +44,10 @@ export default function Home() {
     <>
       <a className="skip-link" href="#main">Skip to content</a>
       <SignalField />
-      <div className="ambient ambient-one" aria-hidden="true" />
-      <div className="ambient ambient-two" aria-hidden="true" />
-      <div ref={astronautRef} className="astronaut-float" aria-hidden="true">
-        <div className="astronaut-float__bob">
+      <div className={`${styles.ambient} ${styles.ambientOne}`} aria-hidden="true" />
+      <div className={`${styles.ambient} ${styles.ambientTwo}`} aria-hidden="true" />
+      <div ref={astronautRef} className={styles.astronaut} aria-hidden="true">
+        <div className={styles.astronautBob}>
           <img src="/images/astronaut.png" alt="" draggable={false} decoding="async" />
         </div>
       </div>
@@ -60,8 +60,8 @@ export default function Home() {
       />
 
       <main id="main">
-        <div ref={spaceshipRef} className="spaceship-float" aria-hidden="true">
-          <div className="spaceship-float__drift">
+        <div ref={spaceshipRef} className={styles.spaceship} aria-hidden="true">
+          <div className={styles.spaceshipDrift}>
             <img src="/images/spaceship.png" alt="" draggable={false} decoding="async" />
           </div>
         </div>

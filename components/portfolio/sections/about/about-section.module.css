@@ -1,0 +1,51 @@
+/* About section styles */
+.layout {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  margin-top: clamp(3rem, 7vw, 7rem);
+  grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+  gap: clamp(3rem, 9vw, 10rem);
+}
+
+.copy > p {
+  margin: 0;
+  font-size: clamp(1.08rem, 1.55vw, 1.42rem);
+  line-height: 1.72;
+}
+
+.copy blockquote {
+  margin: 3rem 0 0;
+  padding: 1.5rem 0 1.5rem 1.5rem;
+  border-left: 1px solid var(--acid);
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+
+.signature {
+  display: flex;
+  margin-top: 3rem;
+  color: var(--faint);
+  font: 500 0.62rem/1 "DM Mono", monospace;
+  letter-spacing: 0.16em;
+}
+
+.signature span:first-child {
+  color: var(--acid);
+  writing-mode: vertical-rl;
+}
+
+.signature span:last-child {
+  align-self: end;
+  margin-left: 0.3rem;
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .copy { max-width: 42rem; margin-left: auto; }
+}
+
+@media (max-width: 650px) {
+  .layout { gap: 2.5rem; }
+}

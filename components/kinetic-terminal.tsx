@@ -17,6 +17,7 @@ import {
   terminalCopy,
   type TerminalCopy,
 } from "../content/terminal";
+import styles from "./kinetic-terminal.module.css";
 
 type Phase = "idle" | "typing" | "ready";
 type EntryKind = "command" | "output" | "error";
@@ -194,25 +195,28 @@ export function KineticTerminal({ language }: { language: Language }) {
   };
 
   return (
-    <div className="profile-terminal" ref={rootRef} role="region" aria-label={copy.ariaLabel}>
-      <div className="terminal-titlebar">
-        <div className="terminal-traffic" aria-hidden="true">
-          <i className="traffic-close" />
-          <i className="traffic-minimize" />
-          <i className="traffic-zoom" />
+    <div className={styles.terminal} ref={rootRef} role="region" aria-label={copy.ariaLabel}>
+      <div className={styles.titlebar}>
+        <div className={styles.traffic} aria-hidden="true">
+          <i className={styles.trafficClose} />
+          <i className={styles.trafficMinimize} />
+          <i className={styles.trafficZoom} />
         </div>
-        <span className="terminal-title">{copy.title}</span>
-        <span className="terminal-session">zsh · 96×28</span>
+        <span className={styles.title}>{copy.title}</span>
+        <span className={styles.session}>zsh · 96×28</span>
       </div>
 
-      <div className="terminal-screen">
-        <div className="terminal-scroll" ref={scrollRef}>
-          <div className="terminal-intro">
-            <pre className="terminal-ascii" aria-hidden="true">
+      <div className={styles.screen}>
+        <div className={styles.scroll} ref={scrollRef}>
+          <div className={styles.intro}>
+            <pre className={styles.ascii} aria-hidden="true">
               {asciiBannerLines.map((line, lineIndex) => (
-                <span className="terminal-ascii-line" key={lineIndex}>
+                <span className={styles.asciiLine} key={lineIndex}>
                   {line.map((segment, segmentIndex) => (
-                    <span className={`ascii-${segment.tone}`} key={`${lineIndex}-${segmentIndex}`}>
+                    <span
+                      className={segment.tone === "code" ? styles.asciiCode : styles.asciiAccent}
+                      key={`${lineIndex}-${segmentIndex}`}
+                    >
                       {segment.text}
                     </span>
                   ))}
@@ -220,12 +224,12 @@ export function KineticTerminal({ language }: { language: Language }) {
                 </span>
               ))}
             </pre>
-            <div className="terminal-boot">
+            <div className={styles.boot}>
               {copy.boot.map((line, index) => (
                 <span style={{ "--boot-order": index } as CSSProperties} key={line}>{line}</span>
               ))}
             </div>
-            <div className="terminal-examples">
+            <div className={styles.examples}>
               <span>{copy.examplesLabel}</span>
               <div>
                 {copy.examples.map((command) => (
@@ -243,11 +247,16 @@ export function KineticTerminal({ language }: { language: Language }) {
             </div>
           </div>
 
-          <div className="terminal-history" role="log" aria-live="polite">
+          <div className={styles.history} role="log" aria-live="polite">
             {entries.map((entry) => (
-              <div className={`terminal-entry is-${entry.kind}`} key={entry.id}>
+              <div
+                className={`${styles.entry} ${
+                  entry.kind === "output" ? styles.output : entry.kind === "error" ? styles.error : ""
+                }`}
+                key={entry.id}
+              >
                 {entry.kind === "command" && (
-                  <span className="terminal-prompt" aria-hidden="true">edgar@portfolio:~$</span>
+                  <span className={styles.prompt} aria-hidden="true">edgar@portfolio:~$</span>
                 )}
                 <div>
                   {entry.lines.map((line, lineIndex) => (
@@ -258,17 +267,17 @@ export function KineticTerminal({ language }: { language: Language }) {
             ))}
 
             {phase === "typing" && (
-              <div className="terminal-entry is-command terminal-demo-line" aria-hidden="true">
-                <span className="terminal-prompt">edgar@portfolio:~$</span>
-                <div><span>{typedCommand}<i className="terminal-cursor" /></span></div>
+              <div className={styles.entry} aria-hidden="true">
+                <span className={styles.prompt}>edgar@portfolio:~$</span>
+                <div><span>{typedCommand}<i className={styles.cursor} /></span></div>
               </div>
             )}
           </div>
         </div>
 
-        <form className="terminal-input-row" onSubmit={handleSubmit}>
+        <form className={styles.inputRow} onSubmit={handleSubmit}>
           <label className="sr-only" htmlFor="profile-terminal-input">{copy.inputLabel}</label>
-          <span className="terminal-prompt" aria-hidden="true">edgar@portfolio:~$</span>
+          <span className={styles.prompt} aria-hidden="true">edgar@portfolio:~$</span>
           <input
             id="profile-terminal-input"
             value={input}
@@ -289,7 +298,7 @@ export function KineticTerminal({ language }: { language: Language }) {
         </form>
       </div>
 
-      <div className="terminal-statusbar">
+      <div className={styles.statusbar}>
         <span><i />{phase === "ready" ? copy.ready : copy.booting}</span>
         <span>LOCAL · UTF-8</span>
       </div>

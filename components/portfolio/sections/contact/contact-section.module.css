@@ -1,0 +1,116 @@
+/* Contact section styles */
+.contact {
+  position: relative;
+  min-height: 92vh;
+  padding: clamp(6rem, 10vw, 11rem) 4vw 3rem;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--acid) 12%, transparent), transparent 45%),
+    var(--bg-elevated);
+}
+
+.contact::after {
+  position: absolute;
+  right: -7vw;
+  bottom: -20vw;
+  width: 58vw;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--acid) 28%, transparent);
+  border-radius: 50%;
+  content: "";
+  box-shadow:
+    0 0 0 5vw color-mix(in srgb, var(--acid) 2%, transparent),
+    0 0 0 10vw color-mix(in srgb, var(--acid) 2%, transparent);
+}
+
+.layout,
+.footer,
+.index {
+  position: relative;
+  z-index: 5;
+  max-width: 92rem;
+  margin-inline: auto;
+}
+
+.layout {
+  display: grid;
+  margin-top: clamp(3rem, 6vw, 6rem);
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: flex-end;
+  gap: 5rem;
+}
+
+.contact h2 span { display: block; color: var(--acid); }
+
+.body {
+  max-width: 46rem;
+  margin: 2.4rem 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.action { padding-bottom: 1rem; }
+
+.emailLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--acid);
+  font-size: clamp(1.3rem, 2vw, 2.2rem);
+  font-weight: 500;
+}
+
+.emailLink i { color: var(--acid); font-style: normal; }
+
+.action small {
+  display: block;
+  margin-top: 1rem;
+  color: var(--muted);
+  font: 400 0.61rem/1.3 "DM Mono", monospace;
+  word-break: break-all;
+}
+
+.footer {
+  position: absolute;
+  right: 4vw;
+  bottom: 3rem;
+  left: 4vw;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.footer p {
+  display: flex;
+  max-width: 28rem;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  color: var(--muted);
+  font: 400 0.64rem/1.5 "DM Mono", monospace;
+  text-transform: uppercase;
+}
+
+.socialLinks { display: flex; gap: 1.4rem; font: 400 0.65rem/1 "DM Mono", monospace; }
+.socialLinks > span { color: var(--faint); }
+.socialLinks a:hover { color: var(--acid); }
+
+@media (max-width: 900px) {
+  .contact { min-height: auto; padding-bottom: 3rem; }
+  .layout { grid-template-columns: 1fr; }
+  .action { max-width: 38rem; }
+  .footer { position: relative; right: auto; bottom: auto; left: auto; margin-top: 7rem; }
+}
+
+@media (max-width: 650px) {
+  .contact { padding-inline: 1.25rem; }
+  .layout { gap: 3rem; }
+  .footer { align-items: flex-start; flex-direction: column; gap: 2.5rem; }
+  .socialLinks { flex-wrap: wrap; }
+  .socialLinks > span { width: 100%; }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import styles from "./signal-field.module.css";
 
 type Point = {
   x: number;
@@ -117,5 +118,5 @@ export function SignalField() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="signal-field" aria-hidden="true" />;
+  return <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />;
 }

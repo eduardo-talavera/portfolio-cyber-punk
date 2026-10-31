@@ -29,9 +29,12 @@ La internacionalización, los temas, el campo visual de canvas y las animaciones
 
 ## Arquitectura
 
-- `app/`: composición de rutas y estilos globales.
-- `components/`: componentes visuales; `components/portfolio/` agrupa las secciones del portafolio.
+- `app/`: composición de rutas y estilos globales compartidos.
+- `components/`: componentes visuales; cada componente mantiene su CSS Module junto al archivo `.tsx`.
+  - `components/portfolio/layout/`: carpetas `header/` y `footer/`, cada una con componente, estilos y punto de entrada.
+  - `components/portfolio/sections/`: una carpeta por sección (`hero/`, `about/`, `projects/`, etc.), con su componente y CSS Module colocados juntos.
 - `content/`: contenido bilingüe y configuración de la terminal, sin estado de interfaz.
 - `hooks/`: preferencias persistidas, animaciones de scroll y revelado progresivo.
 
 La página principal funciona como capa de composición: conecta contenido, referencias y componentes, mientras cada hook encapsula un efecto del navegador con su propia limpieza.
+`app/globals.css` contiene únicamente tokens de tema, reset y utilidades reutilizadas por varios componentes.

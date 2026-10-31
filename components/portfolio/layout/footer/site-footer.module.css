@@ -1,0 +1,21 @@
+/* Site footer styles */
+.footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 4rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4vw;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--faint);
+  font: 400 0.58rem/1 "DM Mono", monospace;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 650px) {
+  .footer { padding: 1.5rem 1.25rem; flex-wrap: wrap; gap: 1rem; }
+  .footer span:nth-child(2) { order: 3; width: 100%; }
+}
