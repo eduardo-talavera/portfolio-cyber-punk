@@ -88,6 +88,16 @@ export function usePortfolioMotion(refs: PortfolioMotionRefs) {
         const kineticSection = refs.kineticSection.current;
         if (!astronaut || !kineticSection) return;
 
+        const mobile = window.innerWidth <= 700;
+        if (mobile) {
+          const x = window.innerWidth - astronaut.offsetWidth - 18;
+          const y = Math.max(104, window.innerHeight * 0.12);
+
+          astronaut.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(-10deg)`;
+          astronaut.style.opacity = "0.78";
+          return;
+        }
+
         const kineticTop = documentTop(kineticSection, scrollY);
         const fadeDistance = Math.max(180, window.innerHeight * 0.32);
         const sectionVisibility =
@@ -100,7 +110,6 @@ export function usePortfolioMotion(refs: PortfolioMotionRefs) {
 
         const pageRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
         const progress = clamp(scrollY / pageRange);
-        const mobile = window.innerWidth <= 700;
         const width = astronaut.offsetWidth;
         const phase = progress * Math.PI * 4.2;
         const inwardDrift =
@@ -130,6 +139,16 @@ export function usePortfolioMotion(refs: PortfolioMotionRefs) {
         const width = spaceship.offsetWidth;
         const height = spaceship.offsetHeight;
         const viewportHeight = window.innerHeight;
+
+        if (mobile) {
+          const x = Math.max(18, window.innerWidth * 0.045);
+          const y = Math.max(544, viewportHeight * 0.82);
+
+          spaceship.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(8deg)`;
+          spaceship.style.opacity = "1";
+          return;
+        }
+
         const kineticTop = documentTop(kineticSection, scrollY);
         const capabilitiesTop = documentTop(capabilitiesSection, scrollY);
         const headingRect = capabilitiesHeading.getBoundingClientRect();

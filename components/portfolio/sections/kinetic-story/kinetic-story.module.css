@@ -250,11 +250,23 @@
   .heading :global(.section-index) { font-size: 0.56rem; }
   .heading h2 { margin-top: 1.1rem; font-size: clamp(3.3rem, 15.5vw, 5.2rem); }
   .heading h2 span:last-child { margin-left: 0; }
-  .arc { top: 19%; left: -66vw; width: 135vw; border-width: 3rem; }
+  .arc { top: 13%; left: -66vw; width: 135vw; border-width: 3rem; }
   .portal { width: calc(100vw - 2.5rem); height: min(62svh, 36rem); min-height: 28rem; }
-  .copy { right: 1.25rem; bottom: 4.5rem; width: calc(100vw - 2.5rem); }
-  .copy p { max-width: 29rem; margin-left: auto; padding-left: 22vw; font-size: 0.9rem; }
-  .copy a { width: 58%; margin-left: auto; }
+  .copy {
+    top: clamp(23.5rem, 44.5svh, 25rem);
+    right: 1.25rem;
+    bottom: auto;
+    width: calc(100vw - 2.5rem);
+    opacity: var(--scene-settle);
+  }
+  .copy p {
+    max-width: 29rem;
+    margin: 0 0 0.35rem;
+    padding: 0;
+    font-size: clamp(0.74rem, 3vw, 0.84rem);
+    line-height: 1.35;
+  }
+  .copy a { width: 100%; margin: 0; padding-block: 0.6rem; }
   .counter { display: none; }
 }
 

@@ -1,6 +1,12 @@
 import type { PortfolioCopy } from "../../../../content/portfolio";
 import styles from "./contact-section.module.css";
 
+const CONTACT_EMAIL = "edgar.developer.talavera77@gmail.com";
+const EMAIL_SUBJECT = "Contacto desde tu portafolio / Portfolio inquiry";
+const EMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+  CONTACT_EMAIL,
+)}&su=${encodeURIComponent(EMAIL_SUBJECT)}`;
+
 export function ContactSection({ copy }: { copy: PortfolioCopy }) {
   return (
     <section className={styles.contact} id="contact">
@@ -11,10 +17,17 @@ export function ContactSection({ copy }: { copy: PortfolioCopy }) {
           <p className={styles.body} data-reveal>{copy.contact.body}</p>
         </div>
         <div className={styles.action} data-reveal>
-          <a className={styles.emailLink} href="mailto:edgar.developer.talavera77@gmail.com">
+          <a
+            className={styles.emailLink}
+            href={EMAIL_COMPOSE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span>{copy.contact.email}</span><i>↗</i>
           </a>
-          <small>edgar.developer.talavera77@gmail.com</small>
+          <a className={styles.emailAddress} href={`mailto:${CONTACT_EMAIL}`}>
+            {CONTACT_EMAIL}
+          </a>
         </div>
       </div>
       <div className={styles.footer}>

@@ -22,6 +22,7 @@
   box-shadow:
     0 0 0 5vw color-mix(in srgb, var(--acid) 2%, transparent),
     0 0 0 10vw color-mix(in srgb, var(--acid) 2%, transparent);
+  pointer-events: none;
 }
 
 .layout,
@@ -65,13 +66,17 @@
 
 .emailLink i { color: var(--acid); font-style: normal; }
 
-.action small {
+.emailAddress {
   display: block;
   margin-top: 1rem;
   color: var(--muted);
   font: 400 0.61rem/1.3 "DM Mono", monospace;
   word-break: break-all;
+  transition: color 180ms ease;
 }
+
+.emailAddress:hover,
+.emailAddress:focus-visible { color: var(--acid); }
 
 .footer {
   position: absolute;
