@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteFooter, SiteHeader } from "../components/portfolio/layout";
 import {
   AboutSection,
@@ -12,6 +12,12 @@ import {
   StackSection,
 } from "../components/portfolio/sections";
 import { SignalField } from "../components/signal-field";
+import {
+  DEFAULT_KINETIC_TRANSITION,
+  KINETIC_TRANSITION_STORAGE_KEY,
+  isKineticTransition,
+  type KineticTransition,
+} from "../content/motion";
 import { portfolioContent } from "../content/portfolio";
 import { usePortfolioMotion } from "../hooks/use-portfolio-motion";
 import { usePortfolioPreferences } from "../hooks/use-portfolio-preferences";
@@ -26,18 +32,41 @@ export default function Home() {
   const capabilitiesHeadingRef = useRef<HTMLDivElement>(null);
   const projectSectionRef = useRef<HTMLElement>(null);
   const projectTrackRef = useRef<HTMLDivElement>(null);
+  const [kineticTransition, setKineticTransition] = useState<KineticTransition>(
+    DEFAULT_KINETIC_TRANSITION,
+  );
   const { language, switchLanguage, switchTheme } = usePortfolioPreferences();
   const copy = portfolioContent[language];
 
-  usePortfolioMotion({
-    astronaut: astronautRef,
-    spaceship: spaceshipRef,
-    kineticSection: kineticSectionRef,
-    capabilitiesSection: capabilitiesSectionRef,
-    capabilitiesHeading: capabilitiesHeadingRef,
-    projectSection: projectSectionRef,
-    projectTrack: projectTrackRef,
-  });
+  useEffect(() => {
+    const queryTransition = new URLSearchParams(window.location.search).get("motion");
+    const storedTransition = window.localStorage.getItem(KINETIC_TRANSITION_STORAGE_KEY);
+    const selectedTransition = isKineticTransition(queryTransition)
+      ? queryTransition
+      : isKineticTransition(storedTransition)
+        ? storedTransition
+        : DEFAULT_KINETIC_TRANSITION;
+
+    setKineticTransition(selectedTransition);
+  }, []);
+
+  const selectKineticTransition = useCallback((transition: KineticTransition) => {
+    setKineticTransition(transition);
+    window.localStorage.setItem(KINETIC_TRANSITION_STORAGE_KEY, transition);
+  }, []);
+
+  usePortfolioMotion(
+    {
+      astronaut: astronautRef,
+      spaceship: spaceshipRef,
+      kineticSection: kineticSectionRef,
+      capabilitiesSection: capabilitiesSectionRef,
+      capabilitiesHeading: capabilitiesHeadingRef,
+      projectSection: projectSectionRef,
+      projectTrack: projectTrackRef,
+    },
+    kineticTransition,
+  );
   useRevealOnScroll(language);
 
   return (
@@ -67,7 +96,13 @@ export default function Home() {
         </div>
 
         <Hero copy={copy} />
-        <KineticStory copy={copy} language={language} sectionRef={kineticSectionRef} />
+        <KineticStory
+          copy={copy}
+          language={language}
+          sectionRef={kineticSectionRef}
+          transition={kineticTransition}
+          onTransitionChange={selectKineticTransition}
+        />
         <AboutSection copy={copy} />
         <CapabilitiesSection
           copy={copy}

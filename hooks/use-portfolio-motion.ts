@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, type RefObject } from "react";
+import type { KineticTransition } from "../content/motion";
 
 interface PortfolioMotionRefs {
   astronaut: RefObject<HTMLDivElement | null>;
@@ -19,7 +20,10 @@ const lerp = (start: number, end: number, progress: number) =>
 const documentTop = (element: HTMLElement, scrollY: number) =>
   element.getBoundingClientRect().top + scrollY;
 
-export function usePortfolioMotion(refs: PortfolioMotionRefs) {
+export function usePortfolioMotion(
+  refs: PortfolioMotionRefs,
+  kineticTransition: KineticTransition,
+) {
   useEffect(() => {
     let animationFrame = 0;
     let cleanup = () => {};
@@ -46,26 +50,30 @@ export function usePortfolioMotion(refs: PortfolioMotionRefs) {
         section.style.height = `${window.innerHeight + travel + window.innerHeight * 0.55}px`;
       };
 
-      const updateKineticScene = (scrollY: number) => {
-        const section = refs.kineticSection.current;
-        if (!section) return;
+      const setReducedKineticScene = (section: HTMLElement) => {
+        section.style.setProperty("--scene-progress", "1");
+        section.style.setProperty("--scene-reveal", "1");
+        section.style.setProperty("--scene-settle", "1");
+        section.style.setProperty("--portal-x", "0px");
+        section.style.setProperty("--portal-y", "0px");
+        section.style.setProperty("--portal-scale", "1");
+        section.style.setProperty("--portal-scale-y", "1");
+        section.style.setProperty("--portal-tilt", "0deg");
+        section.style.setProperty("--portal-rotate-x", "0deg");
+        section.style.setProperty("--title-x", "0px");
+        section.style.setProperty("--copy-x", "0px");
+        section.style.setProperty("--arc-rotation", "28deg");
+        section.style.setProperty("--cyber-boot", "1");
+        section.style.setProperty("--cyber-terminal", "1");
+        section.style.setProperty("--cyber-copy", "1");
+        section.style.setProperty("--cyber-glitch", "0");
+        section.style.setProperty("--cyber-scan", "1");
+      };
 
-        if (reduceMotion) {
-          section.style.setProperty("--scene-progress", "1");
-          section.style.setProperty("--scene-reveal", "1");
-          section.style.setProperty("--scene-settle", "1");
-          section.style.setProperty("--portal-x", "0px");
-          section.style.setProperty("--portal-y", "0px");
-          section.style.setProperty("--portal-scale", "1");
-          section.style.setProperty("--portal-tilt", "0deg");
-          section.style.setProperty("--title-x", "0px");
-          section.style.setProperty("--copy-x", "0px");
-          section.style.setProperty("--arc-rotation", "28deg");
-          return;
-        }
-
-        const range = Math.max(1, section.offsetHeight - window.innerHeight);
-        const rawProgress = clamp((scrollY - section.offsetTop) / range);
+      const updateClassicKineticScene = (
+        section: HTMLElement,
+        rawProgress: number,
+      ) => {
         const progress = smooth(rawProgress);
         const reveal = smooth(clamp((rawProgress - 0.12) / 0.56));
         const settle = smooth(clamp((rawProgress - 0.58) / 0.42));
@@ -77,10 +85,71 @@ export function usePortfolioMotion(refs: PortfolioMotionRefs) {
         section.style.setProperty("--portal-x", `${mobile ? 0 : -progress * window.innerWidth * 0.23}px`);
         section.style.setProperty("--portal-y", `${progress * window.innerHeight * (mobile ? 0.25 : 0.2)}px`);
         section.style.setProperty("--portal-scale", `${1 - progress * (mobile ? 0.3 : 0.42)}`);
+        section.style.setProperty("--portal-scale-y", "1");
         section.style.setProperty("--portal-tilt", `${progress * -4}deg`);
+        section.style.setProperty("--portal-rotate-x", "0deg");
         section.style.setProperty("--title-x", `${(1 - reveal) * -190}px`);
         section.style.setProperty("--copy-x", `${(1 - reveal) * 150}px`);
         section.style.setProperty("--arc-rotation", `${-105 + reveal * 138}deg`);
+      };
+
+      const updateCyberpunkKineticScene = (
+        section: HTMLElement,
+        rawProgress: number,
+      ) => {
+        const progress = smooth(rawProgress);
+        const boot = smooth(clamp((rawProgress - 0.03) / 0.2));
+        const terminal = smooth(clamp((rawProgress - 0.18) / 0.3));
+        const settle = smooth(clamp((rawProgress - 0.48) / 0.4));
+        const copy = smooth(clamp((rawProgress - 0.66) / 0.22));
+        const mobile = window.innerWidth <= 700;
+        const interference =
+          boot * (1 - settle) * (0.22 + Math.abs(Math.sin(rawProgress * 87)) * 0.78);
+        const titleJitter = Math.sin(rawProgress * 111) * interference * (mobile ? 5 : 11);
+        const portalStartX = mobile ? 0 : window.innerWidth * 0.16;
+        const portalEndX = mobile ? 0 : window.innerWidth * -0.19;
+        const portalStartY = window.innerHeight * (mobile ? 0.08 : 0.06);
+        const portalEndY = window.innerHeight * (mobile ? 0.24 : 0.16);
+        const finalScale = mobile ? 0.72 : 0.64;
+        const glitchDecay = 1 - terminal * 0.72;
+
+        section.style.setProperty("--scene-progress", progress.toFixed(4));
+        section.style.setProperty("--scene-reveal", boot.toFixed(4));
+        section.style.setProperty("--scene-settle", copy.toFixed(4));
+        section.style.setProperty("--cyber-boot", boot.toFixed(4));
+        section.style.setProperty("--cyber-terminal", terminal.toFixed(4));
+        section.style.setProperty("--cyber-copy", copy.toFixed(4));
+        section.style.setProperty("--cyber-glitch", (interference * glitchDecay).toFixed(4));
+        section.style.setProperty("--cyber-scan", clamp(rawProgress * 1.28).toFixed(4));
+        section.style.setProperty("--portal-x", `${lerp(portalStartX, portalEndX, settle)}px`);
+        section.style.setProperty("--portal-y", `${lerp(portalStartY, portalEndY, settle)}px`);
+        section.style.setProperty("--portal-scale", `${lerp(1, finalScale, settle)}`);
+        section.style.setProperty("--portal-scale-y", `${0.015 + terminal * 0.985}`);
+        section.style.setProperty("--portal-tilt", `${lerp(-1.5, -3.2, settle)}deg`);
+        section.style.setProperty("--portal-rotate-x", `${lerp(62, 0, terminal)}deg`);
+        section.style.setProperty("--title-x", `${(1 - boot) * -48 + titleJitter * glitchDecay}px`);
+        section.style.setProperty("--copy-x", `${(1 - copy) * (mobile ? 36 : 120)}px`);
+        section.style.setProperty("--arc-rotation", `${-72 + rawProgress * 420}deg`);
+      };
+
+      const updateKineticScene = (scrollY: number) => {
+        const section = refs.kineticSection.current;
+        if (!section) return;
+
+        if (reduceMotion) {
+          setReducedKineticScene(section);
+          return;
+        }
+
+        const range = Math.max(1, section.offsetHeight - window.innerHeight);
+        const rawProgress = clamp((scrollY - section.offsetTop) / range);
+
+        if (kineticTransition === "classic") {
+          updateClassicKineticScene(section, rawProgress);
+          return;
+        }
+
+        updateCyberpunkKineticScene(section, rawProgress);
       };
 
       const updateAstronaut = (scrollY: number, velocity = 0) => {
@@ -300,5 +369,6 @@ export function usePortfolioMotion(refs: PortfolioMotionRefs) {
     refs.projectSection,
     refs.projectTrack,
     refs.spaceship,
+    kineticTransition,
   ]);
 }

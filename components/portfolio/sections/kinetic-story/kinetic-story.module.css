@@ -6,10 +6,17 @@
   --portal-x: 0px;
   --portal-y: 0px;
   --portal-scale: 1;
+  --portal-scale-y: 1;
   --portal-tilt: 0deg;
+  --portal-rotate-x: 0deg;
   --title-x: -190px;
   --copy-x: 150px;
   --arc-rotation: -105deg;
+  --cyber-boot: 0;
+  --cyber-terminal: 0;
+  --cyber-copy: 0;
+  --cyber-glitch: 0;
+  --cyber-scan: 0;
   position: relative;
   height: 300vh;
   background: var(--bg);
@@ -50,6 +57,55 @@
   mask-image: radial-gradient(circle at center, black, transparent 72%);
   transform: perspective(700px) rotateX(64deg) scale(1.4) translateY(30%);
   transform-origin: center bottom;
+}
+
+.cyberFx {
+  display: none;
+}
+
+.transitionPicker {
+  position: absolute;
+  z-index: 12;
+  top: 6.25rem;
+  right: 3vw;
+  display: flex;
+  min-height: 2rem;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
+  backdrop-filter: blur(12px);
+  font: 500 0.56rem/1 "DM Mono", monospace;
+  letter-spacing: 0.08em;
+}
+
+.transitionPicker > span {
+  display: grid;
+  padding: 0 0.65rem;
+  border-right: 1px solid var(--line);
+  place-items: center;
+  color: var(--faint);
+}
+
+.transitionPicker button {
+  padding: 0 0.7rem;
+  border: 0;
+  color: var(--faint);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.transitionPicker button + button { border-left: 1px solid var(--line); }
+
+.transitionPicker button[aria-pressed="true"] {
+  color: var(--acid);
+  background: color-mix(in srgb, var(--acid) 9%, transparent);
+  box-shadow: inset 0 -1px 0 var(--acid);
+}
+
+.transitionPicker button:focus-visible {
+  outline: 1px solid var(--acid);
+  outline-offset: -3px;
 }
 
 .heading {
@@ -131,7 +187,13 @@
     0 3rem 9rem var(--shadow),
     inset 0 0 0 1px color-mix(in srgb, var(--ink) 5%, transparent),
     inset 0 -10rem 13rem color-mix(in srgb, var(--cyan) 8%, transparent);
-  transform: translate(-50%, -50%) translate3d(var(--portal-x), var(--portal-y), 0) scale(var(--portal-scale)) rotateZ(var(--portal-tilt));
+  transform:
+    translate(-50%, -50%)
+    translate3d(var(--portal-x), var(--portal-y), 0)
+    scale(var(--portal-scale))
+    scaleY(var(--portal-scale-y))
+    rotateX(var(--portal-rotate-x))
+    rotateZ(var(--portal-tilt));
   transform-style: preserve-3d;
   transform-origin: center;
   will-change: transform;
@@ -228,6 +290,156 @@
   transform-origin: left;
 }
 
+/* Alternative scroll scene: terminal boot + signal interference. */
+.story[data-transition="cyberpunk"] .sticky::before {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--acid) 5%, transparent), transparent 26%, transparent 74%, color-mix(in srgb, var(--cyan) 5%, transparent)),
+    radial-gradient(circle at 48% 58%, color-mix(in srgb, var(--cyan) 13%, transparent), transparent 31%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg) 94%, var(--cyan)),
+      var(--bg-elevated)
+    );
+}
+
+.story[data-transition="cyberpunk"] .grid {
+  inset: 0;
+  opacity: calc(0.08 + var(--cyber-boot) * 0.2);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--acid) 13%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--cyan) 11%, transparent) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 78%, transparent);
+  transform: perspective(800px) rotateX(70deg) scale(1.35) translateY(29%);
+}
+
+.story[data-transition="cyberpunk"] .cyberFx {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  opacity: var(--cyber-boot);
+  pointer-events: none;
+}
+
+.story[data-transition="cyberpunk"] .cyberFx::before {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--cyber-scan) * 100%);
+  right: 0;
+  left: 0;
+  height: 2px;
+  content: "";
+  background: linear-gradient(90deg, transparent, var(--acid) 20%, white 50%, var(--cyan) 80%, transparent);
+  box-shadow: 0 0 1.4rem var(--cyan), 0 0 3rem color-mix(in srgb, var(--acid) 42%, transparent);
+  opacity: calc(1 - var(--cyber-scan));
+}
+
+.story[data-transition="cyberpunk"] .cyberFx::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  opacity: 0.17;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--acid) 18%, transparent) 3px 4px);
+  mix-blend-mode: screen;
+}
+
+.story[data-transition="cyberpunk"] .cyberFx > span {
+  position: absolute;
+  right: 3vw;
+  bottom: 2rem;
+  color: var(--acid);
+  font: 400 0.55rem/1 "DM Mono", monospace;
+  letter-spacing: 0.13em;
+  opacity: 0.72;
+}
+
+.story[data-transition="cyberpunk"] .cyberFx i {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan));
+  box-shadow: 0 0 0.8rem var(--cyan);
+  opacity: var(--cyber-glitch);
+  transform: scaleX(var(--cyber-glitch));
+  transform-origin: right;
+}
+
+.story[data-transition="cyberpunk"] .cyberFx i:nth-child(2) { top: 24%; width: 31%; }
+.story[data-transition="cyberpunk"] .cyberFx i:nth-child(3) { top: 47%; width: 18%; }
+.story[data-transition="cyberpunk"] .cyberFx i:nth-child(4) { top: 71%; width: 42%; }
+
+.story[data-transition="cyberpunk"] .heading {
+  opacity: var(--cyber-boot);
+  filter: drop-shadow(calc(var(--cyber-glitch) * 7px) 0 0 color-mix(in srgb, var(--cyan) 46%, transparent));
+}
+
+.story[data-transition="cyberpunk"] .heading h2 > span {
+  position: relative;
+}
+
+.story[data-transition="cyberpunk"] .heading h2 > span::before,
+.story[data-transition="cyberpunk"] .heading h2 > span::after {
+  position: absolute;
+  inset: 0;
+  content: attr(data-text);
+  pointer-events: none;
+  opacity: var(--cyber-glitch);
+}
+
+.story[data-transition="cyberpunk"] .heading h2 > span::before {
+  color: var(--acid);
+  clip-path: inset(12% 0 62% 0);
+  transform: translateX(calc(var(--cyber-glitch) * -15px));
+}
+
+.story[data-transition="cyberpunk"] .heading h2 > span::after {
+  color: var(--cyan);
+  clip-path: inset(67% 0 9% 0);
+  transform: translateX(calc(var(--cyber-glitch) * 18px));
+}
+
+.story[data-transition="cyberpunk"] .arc {
+  border-width: 1px;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--cyan) 48%, transparent);
+  opacity: calc(var(--cyber-boot) * 0.68);
+  filter: drop-shadow(0 0 1.2rem color-mix(in srgb, var(--cyan) 34%, transparent));
+}
+
+.story[data-transition="cyberpunk"] .arc::after {
+  inset: 8%;
+  border-color: color-mix(in srgb, var(--acid) 34%, transparent);
+}
+
+.story[data-transition="cyberpunk"] .portal {
+  border-color: color-mix(in srgb, var(--acid) 52%, var(--cyan));
+  border-radius: 4px;
+  opacity: var(--cyber-terminal);
+  box-shadow:
+    0 0 calc(1rem + var(--cyber-glitch) * 4rem) color-mix(in srgb, var(--cyan) 22%, transparent),
+    0 3rem 9rem var(--shadow),
+    inset 0 0 0 1px color-mix(in srgb, var(--acid) 10%, transparent);
+}
+
+.story[data-transition="cyberpunk"] .portal::after {
+  top: calc(var(--cyber-scan) * 100%);
+  background: var(--acid);
+  box-shadow: 0 0 1.5rem var(--acid);
+  animation: none;
+  opacity: calc(1 - var(--cyber-scan));
+}
+
+.story[data-transition="cyberpunk"] .copy {
+  opacity: var(--cyber-copy);
+}
+
+.story[data-transition="cyberpunk"] .counter i::after {
+  background: linear-gradient(90deg, var(--acid), var(--cyan));
+}
+
 @keyframes portal-scan {
   0%, 100% { transform: translateY(0); opacity: 0; }
   8% { opacity: 0.9; }
@@ -246,6 +458,9 @@
 @media (max-width: 650px) {
   .story { height: 245vh; }
   .sticky { min-height: 38rem; }
+  .transitionPicker { top: 5.25rem; right: 1rem; min-height: 1.8rem; }
+  .transitionPicker > span { display: none; }
+  .transitionPicker button { padding-inline: 0.6rem; font-size: 0.52rem; }
   .heading { top: 12vh; left: 1.25rem; width: calc(100vw - 2.5rem); }
   .heading :global(.section-index) { font-size: 0.56rem; }
   .heading h2 { margin-top: 1.1rem; font-size: clamp(3.3rem, 15.5vw, 5.2rem); }
@@ -268,6 +483,7 @@
   }
   .copy a { width: 100%; margin: 0; padding-block: 0.6rem; }
   .counter { display: none; }
+  .story[data-transition="cyberpunk"] .cyberFx > span { right: 1rem; bottom: 1.25rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
